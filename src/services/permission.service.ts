@@ -21,6 +21,30 @@ class PermissionService {
         }
     }
 
+    async getAllPermissions(): Promise<Result> {    
+        try {
+            const permissions = await PermissionRepository.findAllPermission();
+            if (!permissions) {
+                throw new notFoundError("Permissions not found");
+            }
+            return new Result( true, 200, "Get all permissions successful", { permissions } )
+        } catch (error : unknown) {
+            throw error;
+        }
+    }
+
+    async getPermissionById( permissionId : number ) : Promise<Result> {
+        try {
+            const permission = await PermissionRepository.findPermissionById( permissionId );
+            if (!permission) {
+                throw new notFoundError("Permission not found");
+            }
+            return new Result( true, 200, "Get permission successful", { permission } );
+        } catch (error : unknown) {
+            throw error;
+        }
+    }
+
     async updatePermission( permissionId : number, permission : Partial<Permission> ) : Promise<Result> {
         try {
             const isExistedPermission = await PermissionRepository.findPermissionById( permissionId );

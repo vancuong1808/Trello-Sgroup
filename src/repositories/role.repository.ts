@@ -1,4 +1,5 @@
 import { Role } from "../orm/entities/role.entity";
+import { Permission } from "../orm/entities/permission.entity"; 
 import { badRequestError } from "../handlers/errors/customError";
 import { mysqlSource } from "../configs/data-source.config";
 
@@ -94,7 +95,23 @@ class RoleRepository {
         }
     }
 
-    
+    async assignRoleToPermission( role : Role, permission : Permission ) : Promise<void> {
+        try {
+            role.permissions.push( permission );
+            await this.roleRepository.save( role );
+        } catch (error : unknown) {
+            throw new badRequestError(`RoleReposity has error : ${ error }`);
+        }
+    }
+
+    async removeRoleFromPermission( role : Role, permission : Permission ) : Promise<void> {
+        try {
+            role.permissions = role.permissions.filter((element) => element.id !== permission.id);
+            await this.roleRepository.save( role );
+        } catch (error : unknown) {
+            throw new badRequestError(`RoleReposity has error : ${ error }`);
+        }
+    }
 }
 
 export default new RoleRepository();

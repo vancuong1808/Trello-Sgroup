@@ -81,7 +81,7 @@ class UserRepository {
         }
     }
 
-    async updatedUser( userId: number, userData : Partial<User> ) : Promise<void> {
+    async updateUser( userId: number, userData : Partial<User> ) : Promise<void> {
         try {
             await this.userRepository.update( userId, userData );
         } catch (error : unknown) {
