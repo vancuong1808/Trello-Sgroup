@@ -1,6 +1,6 @@
 import { Result } from '../handlers/result.handler.ts';
 import { RoleBody } from '../common/typings/custom.interface';
-import { conflictError, unauthorizedError, notFoundError } from "../handlers/errors/customError.ts";
+import { conflictError, unauthorizedError, notFoundError, badRequestError } from "../handlers/errors/customError.ts";
 import { Role } from "../orm/entities/role.entity"
 import RoleRepository from "../repositories/role.repository"
 import PermissionRepository from '../repositories/permission.repository.ts';
@@ -82,10 +82,14 @@ class RoleService {
             if (!isExistedPermission) {
                 throw new notFoundError("Permission not found");
             }
-            if ( !isExistedRole?.permissions ) {
-                isExistedRole.permissions = [];
+            const isExistPermissionFromRole = await RoleRepository.findRoleRelateWithPermission( roleId );
+            if (!isExistPermissionFromRole) {
+                throw new badRequestError("Find Role relate with permission fail");
             }
-            await RoleRepository.assignPermissionToRole( isExistedRole, isExistedPermission );
+            if ( isExistPermissionFromRole.permissions.some( (permission) => permission.id === permissionId ) ) {
+                throw new conflictError("Role already has this permission");
+            }
+            await RoleRepository.assignPermissionToRole( isExistPermissionFromRole, isExistedPermission );
             return new Result( true, 200, "Assign role to permission successful");
         } catch (error : unknown) {
             throw error;
@@ -102,11 +106,14 @@ class RoleService {
             if (!isExistedPermission) {
                 throw new notFoundError("Permission not found");
             }
-            const isExistedRolePermission = await RoleRepository.findRoleRelateWithPermission( roleId );
-            if (!isExistedRolePermission || isExistedRolePermission?.permissions.length == 0) {
+            const isExistedRoleFromPermission = await RoleRepository.findRoleRelateWithPermission( roleId );
+            if (!isExistedRoleFromPermission) {
+                throw new badRequestError("Find Role relate with permission fail");
+            }
+            if ( isExistedRoleFromPermission.permissions.length == 0 ) {
                 throw new notFoundError("Role has this permission not found");
             }
-            await RoleRepository.removePermissionFromRole( isExistedRolePermission, isExistedPermission );
+            await RoleRepository.removePermissionFromRole( isExistedRoleFromPermission, isExistedPermission );
             return new Result( true, 200, "Remove role from permission successful");
         } catch (error : unknown) {
             throw error;

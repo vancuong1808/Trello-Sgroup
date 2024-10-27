@@ -52,7 +52,7 @@ class RoleRepository {
         try {
             const roles = await this.roleRepository.find({
                 select : ["id"],
-                relations : ["permission"],
+                relations : ["permissions"],
                 where : {
                     id : roleId
                 }
@@ -67,7 +67,7 @@ class RoleRepository {
         try {
             const roles = await this.roleRepository.find({
                 select : ["id"],
-                relations : ["user"],
+                relations : ["users"],
                 where : {
                     id : roleId
                 }

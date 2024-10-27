@@ -52,7 +52,7 @@ class PermissionRepository {
         try {
             const permissions = await this.permissionRepository.find({
                 select : ["permissionName"],
-                relations : ["role"],
+                relations : ["roles"],
                 where : {
                     id : PermissionId
                 }
@@ -67,7 +67,7 @@ class PermissionRepository {
         try {
             const permissions = await this.permissionRepository.find({
                 select : ["id"],
-                relations : ["role"],
+                relations : ["roles"],
                 where : {
                     roles : {
                         id : In(roleId)

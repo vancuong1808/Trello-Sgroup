@@ -1,5 +1,5 @@
 import { Result } from '../handlers/result.handler.ts';
-import { conflictError, unauthorizedError, notFoundError } from "../handlers/errors/customError.ts";
+import { conflictError, badRequestError, notFoundError } from "../handlers/errors/customError.ts";
 import { User } from '../orm/entities/user.entity.ts';
 import UserRepository from '../repositories/user.repository.ts';
 import RoleRepository from '../repositories/role.repository.ts';
@@ -65,10 +65,14 @@ class UserService {
             if (!isExistedRole) {
                 throw new notFoundError("Role not found");
             }
-            if ( !isExistedUser?.roles ) {
-                isExistedUser.roles = [];
+            const isExistedRoleFromUser = await UserRepository.findUserRelateWithRole( userId );
+            if (!isExistedRoleFromUser) {
+                throw new badRequestError("Find User relate with role fail");
             }
-            await UserRepository.assignRoleToUser( isExistedUser, isExistedRole );
+            if ( isExistedRoleFromUser.roles.some( (role) => role.id === roleId ) ) {
+                throw new conflictError("User already has this role");
+            }
+            await UserRepository.assignRoleToUser( isExistedRoleFromUser, isExistedRole );
             return new Result( true, 200, "Assign role to user successful");
         } catch (error : unknown) {
             throw error;
@@ -85,11 +89,14 @@ class UserService {
             if (!isExistedRole) {
                 throw new notFoundError("Role not found");
             }
-            const isExistedUserRole = await UserRepository.findUserRelateWithRole( userId );
-            if (!isExistedUserRole || isExistedUserRole?.roles.length == 0) {
+            const isExistedRoleFromUser = await UserRepository.findUserRelateWithRole( userId );
+            if (!isExistedRoleFromUser) {
+                throw new badRequestError("Find User relate with role fail");
+            }
+            if ( isExistedRoleFromUser.roles.length == 0 ) {
                 throw new notFoundError("User has this role not found");
             }
-            await UserRepository.removeRoleFromUser( isExistedUserRole, isExistedRole );
+            await UserRepository.removeRoleFromUser( isExistedRoleFromUser, isExistedRole );
             return new Result( true, 200, "Remove role from user successful");
         } catch (error : unknown) {
             throw error;
