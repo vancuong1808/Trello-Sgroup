@@ -59,11 +59,14 @@ class UserRepository {
         }
     }
 
-    async findUserRelateWithRole() : Promise<User | null> {
+    async findUserRelateWithRole( userId : number ) : Promise<User | null> {
         try {
             const users = await this.userRepository.find({
                 select : ["id"],
-                relations : ["roles"]
+                relations : ["roles"],
+                where : {
+                    id : userId
+                }
             });
             return users[0];
         } catch (error : unknown) {
@@ -100,7 +103,7 @@ class UserRepository {
     async assignRoleToUser( user : User, role : Role ) : Promise<void> {
         try {
             user.roles.push(role);
-            await this.userRepository.save( user );
+            await this.userRepository.save(user);
         } catch (error : unknown) {
             throw new badRequestError(`UserRepository has error : ${ error }`);
         }
@@ -108,7 +111,7 @@ class UserRepository {
 
     async removeRoleFromUser( user : User, role : Role ) : Promise<void> {
         try {
-            user.roles = user.roles.filter((r) => r.id !== role.id);
+            user.roles = user.roles.filter((element) => element.id !== role.id);
             await this.userRepository.save( user );
         } catch (error : unknown) {
             throw new badRequestError(`UserRepository has error : ${ error }`);

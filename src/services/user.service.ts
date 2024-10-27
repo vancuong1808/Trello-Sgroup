@@ -65,6 +65,9 @@ class UserService {
             if (!isExistedRole) {
                 throw new notFoundError("Role not found");
             }
+            if ( !isExistedUser?.roles ) {
+                isExistedUser.roles = [];
+            }
             await UserRepository.assignRoleToUser( isExistedUser, isExistedRole );
             return new Result( true, 200, "Assign role to user successful");
         } catch (error : unknown) {
@@ -82,10 +85,16 @@ class UserService {
             if (!isExistedRole) {
                 throw new notFoundError("Role not found");
             }
-            await UserRepository.removeRoleFromUser( isExistedUser, isExistedRole );
+            const isExistedUserRole = await UserRepository.findUserRelateWithRole( userId );
+            if (!isExistedUserRole || isExistedUserRole?.roles.length == 0) {
+                throw new notFoundError("User has this role not found");
+            }
+            await UserRepository.removeRoleFromUser( isExistedUserRole, isExistedRole );
             return new Result( true, 200, "Remove role from user successful");
         } catch (error : unknown) {
             throw error;
         }
     }
 }
+
+export default new UserService();

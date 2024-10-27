@@ -10,11 +10,11 @@ class RoleService {
         try {
             const { roleName } = role;
             const isExistedRole = await RoleRepository.findRoleByName(roleName);
-            if (!isExistedRole) {
+            if (isExistedRole) {
                 throw new conflictError("RoleName already existed");
             }
             const newRole = new Role();
-            newRole.name = roleName;
+            newRole.roleName = roleName;
             await RoleRepository.addRole( newRole );
             return new Result( true, 201, "Role added successful");
         } catch (error : unknown) {
@@ -82,7 +82,10 @@ class RoleService {
             if (!isExistedPermission) {
                 throw new notFoundError("Permission not found");
             }
-            await RoleRepository.assignRoleToPermission( isExistedRole, isExistedPermission );
+            if ( !isExistedRole?.permissions ) {
+                isExistedRole.permissions = [];
+            }
+            await RoleRepository.assignPermissionToRole( isExistedRole, isExistedPermission );
             return new Result( true, 200, "Assign role to permission successful");
         } catch (error : unknown) {
             throw error;
@@ -99,7 +102,11 @@ class RoleService {
             if (!isExistedPermission) {
                 throw new notFoundError("Permission not found");
             }
-            await RoleRepository.removeRoleFromPermission( isExistedRole, isExistedPermission );
+            const isExistedRolePermission = await RoleRepository.findRoleRelateWithPermission( roleId );
+            if (!isExistedRolePermission || isExistedRolePermission?.permissions.length == 0) {
+                throw new notFoundError("Role has this permission not found");
+            }
+            await RoleRepository.removePermissionFromRole( isExistedRolePermission, isExistedPermission );
             return new Result( true, 200, "Remove role from permission successful");
         } catch (error : unknown) {
             throw error;
@@ -108,3 +115,4 @@ class RoleService {
 
 }
 
+export default new RoleService();

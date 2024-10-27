@@ -9,7 +9,7 @@ class RoleRepository {
     async findRoleById( roleId : number ) : Promise<Role | null> {
         try {
             const role = await this.roleRepository.findOne({
-                select : ["id", "name"],
+                select : ["id", "roleName"],
                 where : {
                     id : roleId
                 }
@@ -23,9 +23,9 @@ class RoleRepository {
     async findRoleByName( name : string ) : Promise<Role | null> {
         try {
             const role = await this.roleRepository.findOne({
-                select : ["id", "name"],
+                select : ["id", "roleName"],
                 where : {
-                    name : name
+                    roleName : name
                 }
             });
             return role;
@@ -37,7 +37,7 @@ class RoleRepository {
     async findAllRole() : Promise<Role | null> {
         try {
             const roles = await this.roleRepository.find({
-                select : ["id", "name"]
+                select : ["id", "roleName"],
             });
             return roles[0];
         } catch (error : unknown) {
@@ -45,11 +45,14 @@ class RoleRepository {
         }
     }
 
-    async findRoleRelateWithPermission() : Promise<Role | null> {
+    async findRoleRelateWithPermission( roleId : number ) : Promise<Role | null> {
         try {
             const roles = await this.roleRepository.find({
                 select : ["id"],
-                relations : ["permission"]
+                relations : ["permission"],
+                where : {
+                    id : roleId
+                }
             });
             return roles[0];
         } catch (error : unknown) {
@@ -57,11 +60,14 @@ class RoleRepository {
         }
     }
 
-    async findRoleRelateWithUser() : Promise<Role | null> {
+    async findRoleRelateWithUser( roleId : number ) : Promise<Role | null> {
         try {
             const roles = await this.roleRepository.find({
                 select : ["id"],
-                relations : ["user"]
+                relations : ["user"],
+                where : {
+                    id : roleId
+                }
             });
             return roles[0];
         } catch (error : unknown) {
@@ -95,7 +101,7 @@ class RoleRepository {
         }
     }
 
-    async assignRoleToPermission( role : Role, permission : Permission ) : Promise<void> {
+    async assignPermissionToRole( role : Role, permission : Permission ) : Promise<void> {
         try {
             role.permissions.push( permission );
             await this.roleRepository.save( role );
@@ -104,7 +110,7 @@ class RoleRepository {
         }
     }
 
-    async removeRoleFromPermission( role : Role, permission : Permission ) : Promise<void> {
+    async removePermissionFromRole( role : Role, permission : Permission ) : Promise<void> {
         try {
             role.permissions = role.permissions.filter((element) => element.id !== permission.id);
             await this.roleRepository.save( role );

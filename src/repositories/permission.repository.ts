@@ -8,7 +8,7 @@ class PermissionRepository {
     async findPermissionById( permissionId : number ) : Promise<Permission | null> {
         try {
             const permission = await this.permissionRepository.findOne({
-                select : ["id", "name"],
+                select : ["id", "permissionName"],
                 where : {
                     id : permissionId
                 }
@@ -22,9 +22,9 @@ class PermissionRepository {
     async findPermissionByName( name : string ) : Promise<Permission | null> {
         try {
             const permission = await this.permissionRepository.findOne({
-                select : ["id", "name"],
+                select : ["id", "permissionName"],
                 where : {
-                    name : name
+                    permissionName : name
                 }
             });
             return permission;
@@ -36,7 +36,7 @@ class PermissionRepository {
     async findAllPermission() : Promise<Permission | null> {
         try {
             const permissions = await this.permissionRepository.find({
-                select : ["id", "name"]
+                select : ["id", "permissionName"],
             });
             return permissions[0];
         } catch (error : unknown) {
@@ -44,11 +44,14 @@ class PermissionRepository {
         }
     }
 
-    async findPermissionRelateWithRole() : Promise<Permission | null> {
+    async findPermissionRelateWithRole( PermissionId : number ) : Promise<Permission | null> {
         try {
             const permissions = await this.permissionRepository.find({
                 select : ["id"],
-                relations : ["role"]
+                relations : ["role"],
+                where : {
+                    id : PermissionId
+                }
             });
             return permissions[0];
         } catch (error : unknown) {

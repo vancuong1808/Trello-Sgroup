@@ -1,9 +1,7 @@
 import authService from "../services/auth.service.ts"
 import responseHandler from "../handlers/response.handler.ts";
-import { badRequestError } from "../handlers/errors/customError.ts";
 import { NextFunction, Request, Response } from "express";
 import { LoginBody, RegisterBody } from "../common/typings/custom.interface.ts";
-import { Result } from '../handlers/result.handler.ts';
 
 class AuthController {
     async register( req : Request, res : Response, next : NextFunction ) {

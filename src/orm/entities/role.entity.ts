@@ -8,7 +8,7 @@ export class Role {
     id! : number
 
     @Column({ type : "varchar", length : 100, unique : true  })
-    name! : string
+    roleName! : string
 
     @ManyToMany( () => User, (User) => User.roles )
     @JoinTable({

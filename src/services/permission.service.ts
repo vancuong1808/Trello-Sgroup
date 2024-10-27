@@ -8,12 +8,12 @@ class PermissionService {
     async addPermission( permission : PermissionBody ) : Promise<Result> {
         try {
             const { permissionName } = permission;
-            const isExistedPermission = PermissionRepository.findPermissionByName( permissionName );
-            if (!isExistedPermission) {
+            const isExistedPermission = await PermissionRepository.findPermissionByName( permissionName );
+            if (isExistedPermission) {
                 throw new conflictError("Permission already exist");
             }
             const newPermission = new Permission();
-            newPermission.name = permissionName;
+            newPermission.permissionName = permissionName;
             await PermissionRepository.addPermission( newPermission );
             return new Result( true, 200, "Permission added successful", newPermission );
         } catch (error : unknown) {
