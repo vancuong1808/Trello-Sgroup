@@ -63,10 +63,10 @@ class PermissionRepository {
         }
     }
 
-    async findAllPermissionsRelateWithRole( roleId : number[] ) : Promise<Permission | null> {
+    async findAllPermissionsRelateWithRole( roleId : number[] ) : Promise<Permission[] | null> {
         try {
             const permissions = await this.permissionRepository.find({
-                select : ["id"],
+                select : ["permissionName"],
                 relations : ["roles"],
                 where : {
                     roles : {
@@ -74,7 +74,7 @@ class PermissionRepository {
                     }
                 }
             });
-            return permissions[0];
+            return permissions;
         } catch (error : unknown) {
             throw new badRequestError(`PermissionReposity has error : ${ error }`);
         }

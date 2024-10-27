@@ -24,14 +24,20 @@ export const RequiredPermissions : (
             }
             const user = await UserRepository.findUserById( Number(userId) );
             if ( !user ) {
-                next( new unauthorizedError("you must authenticate before") );
+                next( new unauthorizedError("not found user") );
             }
             const isExistRoleFromUser = await UserRepository.findUserRelateWithRole( Number(userId) );
             if ( !isExistRoleFromUser ) {
-                next( new unauthorizedError("you must authenticate before") );
+                next( new unauthorizedError("Find user relate with role fail") );
             }
             const rolesFromUser : number[] = isExistRoleFromUser!.roles.map(( role : Role ) => role.id);
-            console.log( rolesFromUser );
+            const isExistPermissionFromRole = await PermissionRepository.findAllPermissionsRelateWithRole( rolesFromUser );
+            if ( !isExistPermissionFromRole ) {
+                next( new unauthorizedError("Find all permissions relate with role fail") );
+            }
+            if ( !isExistPermissionFromRole!.some( ( permission ) => permission.permissionName === requiredPermission ) ) {
+                next( new forbiddenError("you don't have permission to access this route") );
+            }
             next();
         } catch (error) {
             next( new badRequestError(`permission middleware has error : ${ error }`))
