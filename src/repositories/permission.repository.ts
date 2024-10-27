@@ -1,6 +1,7 @@
 import { Permission } from "../orm/entities/permission.entity";
 import { mysqlSource } from "../configs/data-source.config";
 import { badRequestError } from "../handlers/errors/customError";
+import { In } from 'typeorm';
 
 class PermissionRepository {
     private readonly permissionRepository = mysqlSource.getRepository(Permission);
@@ -33,12 +34,15 @@ class PermissionRepository {
         }
     }
 
-    async findAllPermission() : Promise<Permission | null> {
+    async findAllPermission() : Promise<Permission[] | null> {
         try {
             const permissions = await this.permissionRepository.find({
                 select : ["id", "permissionName"],
+                order : {
+                    id : 'ASC'
+                }
             });
-            return permissions[0];
+            return permissions;
         } catch (error : unknown) {
             throw new badRequestError(`PermissionReposity has error : ${ error }`);
         }
@@ -47,10 +51,27 @@ class PermissionRepository {
     async findPermissionRelateWithRole( PermissionId : number ) : Promise<Permission | null> {
         try {
             const permissions = await this.permissionRepository.find({
-                select : ["id"],
+                select : ["permissionName"],
                 relations : ["role"],
                 where : {
                     id : PermissionId
+                }
+            });
+            return permissions[0];
+        } catch (error : unknown) {
+            throw new badRequestError(`PermissionReposity has error : ${ error }`);
+        }
+    }
+
+    async findAllPermissionsRelateWithRole( roleId : number[] ) : Promise<Permission | null> {
+        try {
+            const permissions = await this.permissionRepository.find({
+                select : ["id"],
+                relations : ["role"],
+                where : {
+                    roles : {
+                        id : In(roleId)
+                    }
                 }
             });
             return permissions[0];

@@ -48,12 +48,15 @@ class UserRepository {
         }
     }
 
-    async findAllUser() : Promise<User | null> {
+    async findAllUser() : Promise<User[] | null> {
         try {
             const users = await this.userRepository.find({
-                select : ["id", "email", "username"]
+                select : ["id", "email", "username"],
+                order : {
+                    id : 'ASC'
+                }
             });
-            return users[0];
+            return users;
         } catch (error : unknown) {
             throw new badRequestError(`UserRepository has error : ${ error }`);
         }

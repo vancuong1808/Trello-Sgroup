@@ -10,7 +10,9 @@ const roleRoute = express.Router();
 
 roleRoute.post("/add-role", authenticate, RequiredPermissions( Permissions.ADD_ROLE ), validateRoleName, validateHandler, roleController.addRole );
 
-roleRoute.get("/get-all-roles", authenticate, RequiredPermissions( Permissions.VIEW_ROLE ), roleController.getAllRoles );
+roleRoute.get("/get-role/:id", authenticate, RequiredPermissions( Permissions.VIEW_ROLE ), roleController.getRoleById );
+
+roleRoute.get("/get-role/", authenticate, RequiredPermissions( Permissions.VIEW_ROLE ), roleController.getAllRoles );
 
 roleRoute.put("/update-role/:id", authenticate, RequiredPermissions( Permissions.UPDATE_ROLE ), validateRoleName, validateHandler, roleController.updateRole );
 

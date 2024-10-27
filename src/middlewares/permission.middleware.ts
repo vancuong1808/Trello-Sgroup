@@ -5,6 +5,7 @@ import { JwtPayload } from "jsonwebtoken";
 import UserRepository from "../repositories/user.repository";
 import RoleRepository from "../repositories/role.repository";
 import PermissionRepository from "../repositories/permission.repository";
+import { Role } from "../orm/entities/role.entity";
 
 
 export const RequiredPermissions : (
@@ -25,11 +26,12 @@ export const RequiredPermissions : (
             if ( !user ) {
                 next( new unauthorizedError("you must authenticate before") );
             }
-            const isExistRoleForUser = await UserRepository.findUserRelateWithRole( Number(userId) );
-            if ( !isExistRoleForUser ) {
+            const isExistRoleFromUser = await UserRepository.findUserRelateWithRole( Number(userId) );
+            if ( !isExistRoleFromUser ) {
                 next( new unauthorizedError("you must authenticate before") );
             }
-            console.log( isExistRoleForUser );
+            const rolesFromUser : number[] = isExistRoleFromUser!.roles.map(( role : Role ) => role.id);
+            console.log( rolesFromUser );
             next();
         } catch (error) {
             next( new badRequestError(`permission middleware has error : ${ error }`))

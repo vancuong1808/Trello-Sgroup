@@ -34,12 +34,15 @@ class RoleRepository {
         }
     }
 
-    async findAllRole() : Promise<Role | null> {
+    async findAllRole() : Promise<Role[] | null> {
         try {
             const roles = await this.roleRepository.find({
                 select : ["id", "roleName"],
+                order : {
+                    id : 'ASC'
+                }
             });
-            return roles[0];
+            return roles;
         } catch (error : unknown) {
             throw new badRequestError(`RoleReposity has error : ${ error }`);
         }
