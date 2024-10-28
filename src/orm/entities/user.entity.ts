@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToMany, JoinTable } from "typeorm";
 import { Role } from "./role.entity"
+import { WorkSpace } from "./workspace.entity";
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
@@ -19,4 +20,7 @@ export class User {
 
     @ManyToMany( () => Role, (Role) => Role.users )
     roles! : Role[]
+
+    @ManyToMany( () => WorkSpace, (WorkSpace) => WorkSpace.users )
+    workspaces! : WorkSpace[]
 } 
