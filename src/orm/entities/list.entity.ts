@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToMany, ManyToOne, DeleteDateColumn, JoinTable } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, ManyToOne, DeleteDateColumn } from "typeorm";
 import { Board } from "./board.entity";
+import { Card } from "./card.entity"
 
 @Entity()
 export class List {
@@ -17,4 +18,7 @@ export class List {
 
     @ManyToOne( () => Board, (Board) => Board.lists )
     board! : Board
+
+    @OneToMany( () => Card, (Card) => Card.list )
+    cards! : Card[]
 }
