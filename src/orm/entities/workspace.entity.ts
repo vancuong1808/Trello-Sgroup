@@ -9,6 +9,9 @@ export class WorkSpace {
     @Column({ type : "varchar", length : 100 })
     workspaceName! : string
     
+    @Column({ type : "varchar", length : 100 })
+    createdBy! : string
+
     @CreateDateColumn()
     createdAt! : Date
 

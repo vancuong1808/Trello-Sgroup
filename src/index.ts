@@ -13,7 +13,7 @@ mysqlSource.initialize()
     .then(() => {
         console.log("Database is connected");
     })
-    .catch((err) => {
+    .catch((err) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
         console.log("Database is not connected", err);
     })
 // setup Middleware

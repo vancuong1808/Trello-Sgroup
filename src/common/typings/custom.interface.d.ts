@@ -39,7 +39,6 @@ export interface PermissionBody {
 export interface UserBody {
     username: string
     email: string
-    password: string
 }
 
 export interface UserRoleBody {

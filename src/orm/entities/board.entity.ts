@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateColumn, ManyToOne, OneToMany } from "typeorm";
 import { WorkSpace } from "./workspace.entity";
-import { List } from "./list.entity";
+import { Card } from "./card.entity";
 @Entity()
 export class Board {
     @PrimaryGeneratedColumn()
@@ -18,7 +18,6 @@ export class Board {
     @ManyToOne( () => WorkSpace, (WorkSpace) => WorkSpace.boards )
     workspace! : WorkSpace
 
-    @OneToMany( () => List, (List) => List.board )
-    lists! : List[]
-
+    @OneToMany( () => Card, (Card) => Card.board )
+    cards! : Card[]
 }
