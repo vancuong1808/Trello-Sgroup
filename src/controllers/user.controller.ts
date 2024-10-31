@@ -1,7 +1,6 @@
 import userService from "../services/user.service.ts";
 import responseHandler from "../handlers/response.handler.ts";
 import { NextFunction, Request, Response } from "express";
-import { badRequestError } from "../handlers/errors/customError.ts";
 import { UserBody } from "../common/typings/custom.interface";
 
 class UserController {

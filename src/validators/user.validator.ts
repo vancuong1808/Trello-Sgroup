@@ -12,7 +12,6 @@ export const validateUpdateUser = [
         .isEmail().withMessage("Email not valid")
 ]
 
-
 export const validateUser = [
     body('username')
         .notEmpty().withMessage("Username must be not empty")

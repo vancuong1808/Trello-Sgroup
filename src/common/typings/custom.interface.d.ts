@@ -1,3 +1,4 @@
+import { WorkSpace } from './../../orm/entities/workspace.entity';
 import { Request } from "express";
 import { JwtPayload } from "jsonwebtoken";
 
@@ -49,4 +50,8 @@ export interface UserRoleBody {
 export interface RolePermissionBody {
     roleId: number
     permissionId: number
+}
+
+export interface WorkSpaceBody {
+    workspaceName: string
 }
