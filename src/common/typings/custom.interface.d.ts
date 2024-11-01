@@ -55,3 +55,7 @@ export interface RolePermissionBody {
 export interface WorkSpaceBody {
     workspaceName: string
 }
+
+export interface BoardBody {
+    boardName: string
+}

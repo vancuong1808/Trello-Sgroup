@@ -1,5 +1,4 @@
 import express from "express"
-import WorkSpaceController from "../../controllers/workspace.controller"
 import { validateHandler } from "../../handlers/validator.handler.ts"
 import { validateWorkspaceName } from "../../validators/workspace.validator.ts";
 import { authenticate } from "../../middlewares/auth.middleware.ts";
