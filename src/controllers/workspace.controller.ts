@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import { WorkSpaceBody } from "../common/typings/custom.interface";
 
 class WorkSpaceController {
-    async createWorkspace(req: Request, res: Response, next: NextFunction) {
+    async addWorkspace(req: Request, res: Response, next: NextFunction) {
         try {
             const workspaceBody : WorkSpaceBody = req.body;
             const workspace = await workspaceService.createWorkspace( workspaceBody );

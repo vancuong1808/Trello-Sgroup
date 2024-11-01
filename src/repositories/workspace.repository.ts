@@ -47,7 +47,7 @@ class WorkspaceRepository {
         }
     }
 
-    async createWorkspace( workspace : WorkSpace ) : Promise<WorkSpace | null> {
+    async addWorkspace( workspace : WorkSpace ) : Promise<WorkSpace | null> {
         try {
             const newWorkspace = await this.workspaceRepository.create( workspace );
             await this.workspaceRepository.save( newWorkspace );

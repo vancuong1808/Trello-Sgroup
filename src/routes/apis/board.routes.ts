@@ -5,16 +5,16 @@ import { authenticate } from "../../middlewares/auth.middleware.ts";
 import { RequiredPermissions } from "../../middlewares/permission.middleware.ts";
 import { Permissions } from "../../common/enums/permissions.ts";
 import boardController from "../../controllers/board.controller";
-const userRoute = express.Router();
+const boardRoute = express.Router();
 
-userRoute.get("/get/", authenticate, RequiredPermissions( Permissions.VIEW_BOARD ), boardController.getAllBoards );
+boardRoute.get("/get/", authenticate, RequiredPermissions( Permissions.VIEW_BOARD ), boardController.getAllBoards );
 
-userRoute.get("/get/:id", authenticate, RequiredPermissions( Permissions.VIEW_BOARD ), boardController.getBoardById );
+boardRoute.get("/get/:id", authenticate, RequiredPermissions( Permissions.VIEW_BOARD ), boardController.getBoardById );
 
-userRoute.post("/create", authenticate, RequiredPermissions( Permissions.CREATE_BOARD ), validateBoardName, validateHandler, boardController.createBoard );
+boardRoute.post("/create", authenticate, RequiredPermissions( Permissions.ADD_BOARD ), validateBoardName, validateHandler, boardController.addBoard );
 
-userRoute.put("/update/:id", authenticate, RequiredPermissions( Permissions.UPDATE_BOARD ), validateBoardName, validateHandler, boardController.updateBoard );
+boardRoute.put("/update/:id", authenticate, RequiredPermissions( Permissions.UPDATE_BOARD ), validateBoardName, validateHandler, boardController.updateBoard );
 
-userRoute.delete("/delete/:id", authenticate, RequiredPermissions( Permissions.DELETE_BOARD ), boardController.deleteBoard );
+boardRoute.delete("/delete/:id", authenticate, RequiredPermissions( Permissions.DELETE_BOARD ), boardController.deleteBoard );
 
-export default userRoute
+export default boardRoute

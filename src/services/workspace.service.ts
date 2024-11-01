@@ -37,7 +37,7 @@ class WorkspaceService {
             }
             const newWorkspace = new WorkSpace();
             newWorkspace.workspaceName = workspace.workspaceName;
-            await WorkspaceRepository.createWorkspace( newWorkspace );
+            await WorkspaceRepository.addWorkspace( newWorkspace );
             return new Result( true, 201, "Workspace created successful");
         } catch (error : unknown) {
             throw error;

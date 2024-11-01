@@ -1,4 +1,3 @@
-import { Board } from './../orm/entities/board.entity';
 import responseHandler from "../handlers/response.handler";
 import { NextFunction, Request, Response } from "express";
 import { BoardBody } from "../common/typings/custom.interface";
@@ -24,7 +23,7 @@ class BoardController {
         }
     }
 
-    async createBoard( req : Request, res : Response, next : NextFunction ) {
+    async addBoard( req : Request, res : Response, next : NextFunction ) {
         try {
             const boardBody : BoardBody = req.body;
             const board = await boardService.createBoard( boardBody );

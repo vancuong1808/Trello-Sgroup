@@ -46,7 +46,7 @@ export class BoardRepository {
         }
     }
 
-    async createBoard( board : Board ): Promise<Board | null> {
+    async addBoard( board : Board ): Promise<Board | null> {
         try {
             const newBoard = await this.boardRepository.create( board );
             await this.boardRepository.save( newBoard );

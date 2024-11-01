@@ -1,3 +1,4 @@
+import { Card } from './../../orm/entities/card.entity';
 import { WorkSpace } from './../../orm/entities/workspace.entity';
 import { Request } from "express";
 import { JwtPayload } from "jsonwebtoken";
@@ -58,4 +59,8 @@ export interface WorkSpaceBody {
 
 export interface BoardBody {
     boardName: string
+}
+
+export interface CardBody {
+    cardName: string
 }

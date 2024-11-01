@@ -38,7 +38,7 @@ class BoardService {
             }
             const newBoard = new Board();
             newBoard.boardName = board.boardName;
-            await BoardRepository.createBoard( newBoard );
+            await BoardRepository.addBoard( newBoard );
             return new Result( true, 200, "Create board successful", { newBoard } );
         } catch (error : unknown) {
             throw error;
