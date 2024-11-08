@@ -36,8 +36,8 @@ class CardController {
     async addCard( req : Request, res : Response, next : NextFunction ) : Promise<void> {
         try {
             const cardBody : CardBody = req.body;
-            const result = await CardService.createCard( cardBody );
-            responseHandler.ok( res, result.message, result.data || {} );
+            const result = await CardService.addCard( cardBody );
+            responseHandler.created( res, result.message, result.data || {} );
         } catch (error) {
             next( error );
         }

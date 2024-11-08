@@ -1,109 +1,76 @@
 import { Permission } from "../orm/entities/permission.entity";
 import { mysqlSource } from "../configs/data-source.config";
-import { badRequestError } from "../handlers/errors/customError";
 import { In } from 'typeorm';
 
 class PermissionRepository {
     private readonly permissionRepository = mysqlSource.getRepository(Permission);
 
     async findPermissionById( permissionId : number ) : Promise<Permission | null> {
-        try {
-            const permission = await this.permissionRepository.findOne({
-                select : ["id", "permissionName"],
-                where : {
-                    id : permissionId
-                }
-            });
-            return permission
-        } catch (error : unknown) {
-            throw new badRequestError(`PermissionReposity has error : ${ error }`);
-        }
+        const permission = await this.permissionRepository.findOne({
+            select : ["id", "permissionName"],
+            where : {
+                id : permissionId
+            }
+        });
+        return permission
     }
 
     async findPermissionByName( name : string ) : Promise<Permission | null> {
-        try {
-            const permission = await this.permissionRepository.findOne({
-                select : ["id", "permissionName"],
-                where : {
-                    permissionName : name
-                }
-            });
-            return permission;
-        } catch (error : unknown) {
-            throw new badRequestError(`PermissionReposity has error : ${ error }`);
-        }
+        const permission = await this.permissionRepository.findOne({
+            select : ["id", "permissionName"],
+            where : {
+                permissionName : name
+            }
+        });
+        return permission;
     }
 
     async findAllPermission() : Promise<Permission[] | null> {
-        try {
-            const permissions = await this.permissionRepository.find({
-                select : ["id", "permissionName"],
-                order : {
-                    id : 'ASC'
-                }
-            });
-            return permissions;
-        } catch (error : unknown) {
-            throw new badRequestError(`PermissionReposity has error : ${ error }`);
-        }
+        const permissions = await this.permissionRepository.find({
+            select : ["id", "permissionName"],
+            order : {
+                id : 'ASC'
+            }
+        });
+        return permissions;
     }
 
     async findPermissionRelateWithRole( PermissionId : number ) : Promise<Permission | null> {
-        try {
-            const permissions = await this.permissionRepository.find({
-                select : ["permissionName"],
-                relations : ["roles"],
-                where : {
-                    id : PermissionId
-                }
-            });
-            return permissions[0];
-        } catch (error : unknown) {
-            throw new badRequestError(`PermissionReposity has error : ${ error }`);
-        }
+        const permissions = await this.permissionRepository.find({
+            select : ["permissionName"],
+            relations : ["roles"],
+            where : {
+                id : PermissionId
+            }
+        });
+        return permissions[0];
     }
 
     async findAllPermissionsRelateWithRole( roleId : number[] ) : Promise<Permission[] | null> {
-        try {
-            const permissions = await this.permissionRepository.find({
-                select : ["permissionName"],
-                relations : ["roles"],
-                where : {
-                    roles : {
-                        id : In(roleId)
-                    }
+        const permissions = await this.permissionRepository.find({
+            select : ["permissionName"],
+            relations : ["roles"],
+            where : {
+                roles : {
+                    id : In(roleId)
                 }
-            });
-            return permissions;
-        } catch (error : unknown) {
-            throw new badRequestError(`PermissionReposity has error : ${ error }`);
-        }
+            }
+        });
+        return permissions;
     }
 
     async addPermission( permission : Permission ) : Promise<Permission | null> {
-        try {
-            const newPermission = this.permissionRepository.create( permission );
-            await this.permissionRepository.save(newPermission);
-            return newPermission;
-        } catch (error : unknown) {
-            throw new badRequestError(`PermissionReposity has error : ${ error }`);
-        }
+        const newPermission = this.permissionRepository.create( permission );
+        await this.permissionRepository.save(newPermission);
+        return newPermission;
     }
 
     async updatePermission( permissionId : number, permission : Partial<Permission> ) : Promise<void> {
-        try {
-            await this.permissionRepository.update( permissionId, permission );
-        } catch (error : unknown) {
-            throw new badRequestError(`PermissionReposity has error : ${ error }`);
-        }
+        await this.permissionRepository.update( permissionId, permission );
     }
 
     async deletePermission( permissionId : number ) : Promise<void> {
-        try {
-            await this.permissionRepository.delete( permissionId );
-        } catch (error : unknown) {
-            throw new badRequestError(`PermissionReposity has error : ${ error }`);
-        }
+        await this.permissionRepository.delete( permissionId );
     }
 }
 

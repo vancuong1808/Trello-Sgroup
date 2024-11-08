@@ -7,7 +7,7 @@ class WorkSpaceController {
     async addWorkspace(req: Request, res: Response, next: NextFunction) {
         try {
             const workspaceBody : WorkSpaceBody = req.body;
-            const workspace = await workspaceService.createWorkspace( workspaceBody );
+            const workspace = await workspaceService.addWorkspace( workspaceBody );
             responseHandler.created(res, workspace.message, workspace.data || {});
         }
         catch (error: unknown) {

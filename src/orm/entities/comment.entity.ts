@@ -1,5 +1,4 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, UpdateDateColumn } from "typeorm";
-import { User } from "./user.entity"
 import { List } from "./list.entity"
 @Entity()
 export class Comment {
@@ -14,10 +13,7 @@ export class Comment {
 
     @UpdateDateColumn()
     updatedAt! : Date
-
-    @ManyToOne( () => User, (User) => User.comments )
-    user! : User
-    
+   
     @ManyToOne( () => List, (List) => List.comments )
     list! : List
 }

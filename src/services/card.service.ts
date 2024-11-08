@@ -2,14 +2,15 @@ import { Result } from '../handlers/result.handler.ts';
 import { conflictError, notFoundError } from "../handlers/errors/customError.ts";
 import { Card } from '../orm/entities/card.entity.ts';
 import CardRepository from '../repositories/card.repository.ts';
-import { CardBody } from '../common/typings/custom.interface.ts';
+import BoardRepository from '../repositories/board.repository.ts';
+import { CardBody } from '../common/typings/custom.interface';
 
 
 class CardService {
 
     async getAllCards() : Promise<Result> {
         try {
-            const cards = await CardRepository.getAllCards();
+            const cards = await CardRepository.getAllcards();
             return new Result( true, 200, "Get all cards successful", { cards } );
         } catch (error) {
             throw error;
@@ -40,14 +41,19 @@ class CardService {
         }
     }
 
-    async createCard( card : CardBody ) : Promise<Result> {
+    async addCard( card : CardBody ) : Promise<Result> {
         try {
+            const isExistedBoard = await BoardRepository.getBoardById( card.boardId );
+            if (!isExistedBoard) {
+                throw new notFoundError("Board not found");
+            }
             const isExistedCard = await CardRepository.getCardByName( card.cardName );
             if (isExistedCard) {
                 throw new conflictError("Card already existed");
             }
             const newCard = new Card();
             newCard.cardName = card.cardName;
+            newCard.board = isExistedBoard;
             await CardRepository.addCard( newCard );
             return new Result( true, 201, "Create card successful", { newCard } );
         } catch (error) {

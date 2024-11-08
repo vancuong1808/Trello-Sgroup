@@ -59,8 +59,10 @@ export interface WorkSpaceBody {
 
 export interface BoardBody {
     boardName: string
+    workspaceId: number
 }
 
 export interface CardBody {
     cardName: string
+    boardId: number
 }

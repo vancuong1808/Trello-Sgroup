@@ -13,8 +13,8 @@ mysqlSource.initialize()
     .then(() => {
         console.log("Database is connected");
     })
-    .catch((err) => {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-        console.log("Database is not connected", err);
+    .catch((err)=>{
+        console.log("Databaseisnotconnected",err);
     })
 // setup Middleware
 app.use( express.json() );

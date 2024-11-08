@@ -2,7 +2,8 @@ import { Result } from '../handlers/result.handler.ts';
 import { conflictError, notFoundError } from "../handlers/errors/customError.ts";
 import { Board } from '../orm/entities/board.entity.ts';
 import BoardRepository from '../repositories/board.repository.ts';
-import { BoardBody } from '../common/typings/custom.interface.ts';
+import WorkSpaceRepository from '../repositories/workspace.repository.ts';
+import { BoardBody } from '../common/typings/custom.interface';
 
 
 class BoardService {
@@ -30,14 +31,19 @@ class BoardService {
         }
     }
 
-    async createBoard( board : BoardBody ) : Promise<Result> {
+    async addBoard( board : BoardBody ) : Promise<Result> {
         try {
+            const isExistedWorkspace = await WorkSpaceRepository.getWorkspaceById( board.workspaceId );
+            if (!isExistedWorkspace) {
+                throw new notFoundError("Workspace not found");
+            }
             const isExistedBoard = await BoardRepository.getBoardByName( board.boardName );
             if (isExistedBoard) {
                 throw new conflictError("Board already existed");
             }
             const newBoard = new Board();
             newBoard.boardName = board.boardName;
+            newBoard.workspace = isExistedWorkspace;
             await BoardRepository.addBoard( newBoard );
             return new Result( true, 200, "Create board successful", { newBoard } );
         } catch (error : unknown) {

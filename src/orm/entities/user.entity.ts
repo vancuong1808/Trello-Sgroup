@@ -1,8 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToMany, OneToMany } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToMany} from "typeorm";
+import { WorkSpace } from "./workspace.entity"
 import { Role } from "./role.entity"
-import { WorkSpace } from "./workspace.entity";
 import { List } from "./list.entity"
-import { Comment } from "./comment.entity"
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
@@ -20,16 +19,13 @@ export class User {
     @CreateDateColumn()
     createdAt! : Date
 
-    @ManyToMany( () => Role, (Role) => Role.users )
-    roles! : Role[]
-
     @ManyToMany( () => WorkSpace, (WorkSpace) => WorkSpace.users )
     workspaces! : WorkSpace[]
 
+    @ManyToMany( () => Role, (Role) => Role.users )
+    roles! : Role[]
+
     @ManyToMany( () => List, (List) => List.users )
     lists! : List[]
-
-    @OneToMany( () => Comment, (Comment) => Comment.user )
-    comments! : Comment[]
 
 } 

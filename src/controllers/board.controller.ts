@@ -26,7 +26,7 @@ class BoardController {
     async addBoard( req : Request, res : Response, next : NextFunction ) {
         try {
             const boardBody : BoardBody = req.body;
-            const board = await boardService.createBoard( boardBody );
+            const board = await boardService.addBoard( boardBody );
             responseHandler.created( res, board.message, board.data || {} );
         } catch (error : unknown) {
             next( error );

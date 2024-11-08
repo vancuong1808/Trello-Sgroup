@@ -29,7 +29,7 @@ class WorkspaceService {
         }
     }
 
-    async createWorkspace( workspace : WorkSpaceBody ) : Promise<Result> {
+    async addWorkspace( workspace : WorkSpaceBody ) : Promise<Result> {
         try {
             const isExistedWorkspace = await WorkspaceRepository.getWorkspaceByName( workspace.workspaceName );
             if (isExistedWorkspace) {

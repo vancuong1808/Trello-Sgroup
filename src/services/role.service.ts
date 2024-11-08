@@ -1,6 +1,6 @@
 import { Result } from '../handlers/result.handler.ts';
 import { RoleBody } from '../common/typings/custom.interface';
-import { conflictError, unauthorizedError, notFoundError, badRequestError } from "../handlers/errors/customError.ts";
+import { conflictError, notFoundError, badRequestError } from "../handlers/errors/customError.ts";
 import { Role } from "../orm/entities/role.entity"
 import RoleRepository from "../repositories/role.repository"
 import PermissionRepository from '../repositories/permission.repository.ts';

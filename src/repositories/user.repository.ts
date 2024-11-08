@@ -7,118 +7,78 @@ class UserRepository {
     private readonly userRepository = mysqlSource.getRepository(User);
 
     async findUserById( userId : number ) : Promise<User | null> {
-        try {
-            const user = await this.userRepository.findOne({
-                select : ["id", "email", "username"],
-                where : {
-                    id : userId
-                }
-            });
-            return user
-        } catch (error : unknown) {
-            throw new badRequestError(`UserRepository has error : ${ error }`);
-        }
+        const user = await this.userRepository.findOne({
+            select : ["id", "email", "username"],
+            where : {
+                id : userId
+            }
+        });
+        return user
     }
 
     async findUserByEmail( email : string ) : Promise<User | null> {
-        try {
-            const user = await this.userRepository.findOne({
-                select : ["id", "email", "username", "password"],
-                where : {
-                    email : email
-                }
-            });
-            return user;
-        } catch (error : unknown) {
-            throw new badRequestError(`UserRepository has error : ${ error }`);
-        }
+        const user = await this.userRepository.findOne({
+            select : ["id", "email", "username", "password"],
+            where : {
+                email : email
+            }
+        });
+        return user;
     }
 
     async findUserByUsername( username : string ) : Promise<User | null> {
-        try {
-            const user = await this.userRepository.findOne({
-                select : ["id", "email", "username", "password"],
-                where : {
-                    username : username
-                }
-            });
-            return user;
-        } catch (error : unknown) {
-            throw new badRequestError(`UserRepository has error : ${ error }`);
-        }
+        const user = await this.userRepository.findOne({
+            select : ["id", "email", "username", "password"],
+            where : {
+                username : username
+            }
+        });
+        return user;
     }
 
     async findAllUser() : Promise<User[] | null> {
-        try {
-            const users = await this.userRepository.find({
-                select : ["id", "email", "username"],
-                order : {
-                    id : 'ASC'
-                }
-            });
-            return users;
-        } catch (error : unknown) {
-            throw new badRequestError(`UserRepository has error : ${ error }`);
-        }
+        const users = await this.userRepository.find({
+            select : ["id", "email", "username"],
+            order : {
+                id : 'ASC'
+            }
+        });
+        return users;
     }
 
     async findUserRelateWithRole( userId : number ) : Promise<User | null> {
-        try {
-            const users = await this.userRepository.find({
-                select : ["id"],
-                relations : ["roles"],
-                where : {
-                    id : userId
-                }
-            });
-            return users[0];
-        } catch (error : unknown) {
-            throw new badRequestError(`UserRepository has error : ${ error }`);
-        }
+        const users = await this.userRepository.find({
+            select : ["id"],
+            relations : ["roles"],
+            where : {
+                id : userId
+            }
+        });
+        return users[0];
     }
 
     async addUser( user : User ) : Promise<User | null> {
-        try {
-            const newUser = this.userRepository.create(user);
-            await this.userRepository.save(newUser);
-            return newUser;
-        } catch (error : unknown) {
-            throw new badRequestError(`UserRepository has error : ${ error }`);
-        }
+        const newUser = this.userRepository.create(user);
+        await this.userRepository.save(newUser);
+        return newUser;
     }
 
     async updateUser( userId: number, userData : Partial<User> ) : Promise<void> {
-        try {
-            await this.userRepository.update( userId, userData );
-        } catch (error : unknown) {
-            throw new badRequestError(`UserRepository has error : ${ error }`);
-        }
+        await this.userRepository.update( userId, userData );
     }
 
     async deleteUser( userId : number ) : Promise<void> {
-        try {
-            await this.userRepository.delete(userId);
-        } catch (error : unknown) {
-            throw new badRequestError(`UserRepository has error : ${ error }`);
-        }
+        await this.userRepository.delete(userId);
     }
 
     async assignRoleToUser( user : User, role : Role ) : Promise<void> {
-        try {
-            user.roles.push(role);
-            await this.userRepository.save(user);
-        } catch (error : unknown) {
-            throw new badRequestError(`UserRepository has error : ${ error }`);
-        }
+        user.roles.push(role);
+        await this.userRepository.save(user);
     }
 
     async removeRoleFromUser( user : User, role : Role ) : Promise<void> {
-        try {
-            user.roles = user.roles.filter((element) => element.id !== role.id);
-            await this.userRepository.save( user );
-        } catch (error : unknown) {
-            throw new badRequestError(`UserRepository has error : ${ error }`);
-        }
+        user.roles = user.roles.filter((element) => element.id !== role.id);
+        await this.userRepository.save( user );
     }
 }
 
