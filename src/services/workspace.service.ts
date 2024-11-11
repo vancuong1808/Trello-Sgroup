@@ -3,6 +3,7 @@ import { conflictError, notFoundError } from "../handlers/errors/customError.ts"
 import { WorkSpace } from '../orm/entities/workspace.entity.ts';
 import WorkspaceRepository from '../repositories/workspace.repository.ts';
 import { WorkSpaceBody } from '../common/typings/custom.interface';
+import RedisClient from '../common/redis/redis.ts';
 
 class WorkspaceService {
     async getAllWorkspace() : Promise<Result> {
@@ -19,10 +20,16 @@ class WorkspaceService {
 
     async getWorkspaceById( id : number ) : Promise<Result> {
         try {
+            const cachedWorkspace = await RedisClient.getString( `workspace:${ id }` );
+            if (cachedWorkspace) {
+                const workspace = JSON.parse( cachedWorkspace );
+                return new Result( true, 200, "Get workspace successful", { workspace } );
+            }
             const workspace = await WorkspaceRepository.getWorkspaceById( id );
             if (!workspace) {
                 throw new notFoundError("Workspace not found");
             }
+            await RedisClient.setString( `workspace:${ id }`, JSON.stringify( workspace ), 600 );
             return new Result( true, 200, "Get workspace successful", { workspace } );
         } catch (error : unknown) {
             throw error;

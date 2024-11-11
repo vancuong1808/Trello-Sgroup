@@ -4,7 +4,7 @@ import { Card } from '../orm/entities/card.entity.ts';
 import CardRepository from '../repositories/card.repository.ts';
 import BoardRepository from '../repositories/board.repository.ts';
 import { CardBody } from '../common/typings/custom.interface';
-
+import RedisClient from '../common/redis/redis.ts';
 
 class CardService {
 
@@ -19,22 +19,16 @@ class CardService {
 
     async getCardById( id : number ) : Promise<Result> {
         try {
+            const cachedCard = await RedisClient.getString( `card:${ id }` );
+            if (cachedCard) {
+                const card = JSON.parse( cachedCard );
+                return new Result( true, 200, "Get card successful", { card } );
+            }
             const card = await CardRepository.getCardById( id );
             if (!card) {
                 throw new notFoundError("Card not found");
             }
-            return new Result( true, 200, "Get card successful", { card } );
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async getCardByName( name : string ) : Promise<Result> {
-        try {
-            const card = await CardRepository.getCardByName( name );
-            if (!card) {
-                throw new notFoundError("Card not found");
-            }
+            await RedisClient.setString( `card:${ id }`, JSON.stringify( card ), 600 );
             return new Result( true, 200, "Get card successful", { card } );
         } catch (error) {
             throw error;

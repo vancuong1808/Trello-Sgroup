@@ -23,16 +23,6 @@ class CardController {
         }
     }
 
-    async getCardByName( req : Request, res : Response, next : NextFunction ) : Promise<void> {
-        try {
-            const cardName = req.params.name;
-            const result = await CardService.getCardByName( cardName );
-            responseHandler.ok( res, result.message, result.data || {} );
-        } catch (error) {
-            next( error );
-        }
-    }
-
     async addCard( req : Request, res : Response, next : NextFunction ) : Promise<void> {
         try {
             const cardBody : CardBody = req.body;

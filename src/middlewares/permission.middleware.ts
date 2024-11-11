@@ -3,10 +3,9 @@ import { badRequestError, forbiddenError, unauthorizedError } from "../handlers/
 import { CustomRequest } from "../common/typings/custom.interface.d";
 import { JwtPayload } from "jsonwebtoken";
 import UserRepository from "../repositories/user.repository";
-import RoleRepository from "../repositories/role.repository";
 import PermissionRepository from "../repositories/permission.repository";
 import { Role } from "../orm/entities/role.entity";
-
+import RedisClient from "../common/redis/redis";
 
 export const RequiredPermissions : (
     requiredPermission : string
@@ -22,6 +21,14 @@ export const RequiredPermissions : (
             if ( !userId ) {
                 next( new unauthorizedError("you must authenticate before") );
             }
+            const cachedPermission : string | null = await RedisClient.getString( `permissionOfUserId:${ userId }` );
+            if ( cachedPermission ) {
+                const permissions = JSON.parse( cachedPermission );
+                if ( !permissions.some( ( permission : any ) => permission.permissionName === requiredPermission ) ) {
+                    next( new forbiddenError("you don't have permission to access this route") );
+                }
+                return next();
+            }
             const user = await UserRepository.findUserById( Number(userId) );
             if ( !user ) {
                 next( new unauthorizedError("not found user") );
@@ -35,10 +42,11 @@ export const RequiredPermissions : (
             if ( !isExistPermissionFromRole ) {
                 next( new unauthorizedError("Find all permissions relate with role fail") );
             }
+            await RedisClient.setString( `permissionOfUserId:${ userId }`, JSON.stringify( isExistPermissionFromRole ), 3600 );
             if ( !isExistPermissionFromRole!.some( ( permission ) => permission.permissionName === requiredPermission ) ) {
                 next( new forbiddenError("you don't have permission to access this route") );
             }
-            next();
+            return next();
         } catch (error) {
             next( new badRequestError(`permission middleware has error : ${ error }`))
         }

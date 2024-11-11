@@ -4,6 +4,7 @@ import { Board } from '../orm/entities/board.entity.ts';
 import BoardRepository from '../repositories/board.repository.ts';
 import WorkSpaceRepository from '../repositories/workspace.repository.ts';
 import { BoardBody } from '../common/typings/custom.interface';
+import RedisClient from '../common/redis/redis.ts';
 
 
 class BoardService {
@@ -21,10 +22,16 @@ class BoardService {
     
     async getBoardById( id : number ) : Promise<Result> {
         try {
+            const cachedBoard = await RedisClient.getString( `board:${ id }` );
+            if (cachedBoard) {
+                const board = JSON.parse( cachedBoard );
+                return new Result( true, 200, "Get board successful", { board } );
+            }
             const board = await BoardRepository.getBoardById( id );
             if (!board) {
                 throw new notFoundError("Board not found");
             }
+            await RedisClient.setString( `board:${ id }`, JSON.stringify( board ), 600 );
             return new Result( true, 200, "Get board successful", { board } );
         } catch (error : unknown) {
             throw error;

@@ -4,6 +4,7 @@ import { conflictError, notFoundError, badRequestError } from "../handlers/error
 import { Role } from "../orm/entities/role.entity"
 import RoleRepository from "../repositories/role.repository"
 import PermissionRepository from '../repositories/permission.repository.ts';
+import RedisClient from '../common/redis/redis.ts';
 
 class RoleService {
     async addRole( role : RoleBody ) : Promise<Result> {
@@ -36,10 +37,16 @@ class RoleService {
 
     async getRoleById( roleId : number ) : Promise<Result> {
         try {
+            const cachedRole = await RedisClient.getString( `role:${ roleId }` );
+            if (cachedRole) {
+                const role = JSON.parse( cachedRole );
+                return new Result( true, 200, "Get role successful", { role } );
+            }
             const role = await RoleRepository.findRoleById( roleId );
             if (!role) {
                 throw new notFoundError("Role not found");
             }
+            await RedisClient.setString( `role:${ roleId }`, JSON.stringify( role ), 600 );
             return new Result( true, 200, "Get role successful", { role } );
         } catch (error : unknown) {
             throw error;

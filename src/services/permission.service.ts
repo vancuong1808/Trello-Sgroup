@@ -1,8 +1,9 @@
 import { Result } from '../handlers/result.handler.ts';
-import { conflictError, unauthorizedError, notFoundError } from "../handlers/errors/customError.ts";
+import { conflictError, notFoundError } from "../handlers/errors/customError.ts";
 import { Permission } from '../orm/entities/permission.entity.ts';
 import PermissionRepository from "../repositories/permission.repository.ts";
 import { PermissionBody } from '../common/typings/custom.interface';
+import RedisClient from '../common/redis/redis.ts';
 
 class PermissionService {
     async addPermission( permission : PermissionBody ) : Promise<Result> {
@@ -35,10 +36,16 @@ class PermissionService {
 
     async getPermissionById( permissionId : number ) : Promise<Result> {
         try {
+            const cachedPermission = await RedisClient.getString( `permission:${ permissionId }` );
+            if (cachedPermission) {
+                const permission = JSON.parse( cachedPermission );
+                return new Result( true, 200, "Get permission successful", { permission } );
+            }
             const permission = await PermissionRepository.findPermissionById( permissionId );
             if (!permission) {
                 throw new notFoundError("Permission not found");
             }
+            await RedisClient.setString( `permission:${ permissionId }`, JSON.stringify( permission ), 600 );
             return new Result( true, 200, "Get permission successful", { permission } );
         } catch (error : unknown) {
             throw error;

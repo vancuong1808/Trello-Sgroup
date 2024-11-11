@@ -1,4 +1,3 @@
-import { WorkSpace } from './../../orm/entities/workspace.entity';
 import express from "express"
 import { validateHandler } from "../../handlers/validator.handler.ts"
 import { validateWorkspaceName } from "../../validators/workspace.validator.ts";
@@ -11,6 +10,8 @@ const workspaceRoute = express.Router();
 workspaceRoute.get("/get/", authenticate, RequiredPermissions( Permissions.VIEW_WORKSPACE ), workspaceController.getAllWorkspaces );
 
 workspaceRoute.get("/get/:id", authenticate, RequiredPermissions( Permissions.VIEW_WORKSPACE ), workspaceController.getWorkspaceById );
+
+workspaceRoute.post("/create", authenticate, RequiredPermissions( Permissions.ADD_WORKSPACE ), validateWorkspaceName, validateHandler, workspaceController.addWorkspace );
 
 workspaceRoute.put("/update/:id", authenticate, RequiredPermissions( Permissions.UPDATE_WORKSPACE ), validateWorkspaceName, validateHandler, workspaceController.updateWorkspace );
 
