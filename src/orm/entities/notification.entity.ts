@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToMany, ManyToOne, DeleteDateColumn, JoinTable } from "typeorm";
-import { List } from './list.entity'
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, UpdateDateColumn} from "typeorm";
+import { WorkSpace } from './workspace.entity';
 
 @Entity()
 export class Notification {
@@ -10,12 +10,15 @@ export class Notification {
     title! : string
 
     @Column({ type : "varchar", length : 100 })
-    message! : string
+    description! : string
 
     @CreateDateColumn()
     createdAt! : Date
+    
+    @UpdateDateColumn()
+    updatedAt! : Date
 
-    @ManyToOne( () => List, (List => List.notifications ) )
-    list! : List
+    @ManyToOne( () => WorkSpace, (WorkSpace => WorkSpace.notifications ), { onDelete: "CASCADE" })
+    workspace! : WorkSpace
 
 }

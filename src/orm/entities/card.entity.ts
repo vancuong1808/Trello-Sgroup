@@ -1,6 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToMany, ManyToOne, JoinTable, OneToMany } from "typeorm";
-import { Board } from "./board.entity"
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, ManyToOne } from "typeorm";
 import { List } from "./list.entity"
+import { Attachment } from "./attachment.entity"
+import { Comment } from "./comment.entity"
+import { TodoList } from "./todolist.entity"
 
 @Entity()
 export class Card {
@@ -13,9 +15,15 @@ export class Card {
     @CreateDateColumn()
     createdAt! : Date
 
-    @ManyToOne( () => Board, (Board) => Board.cards)
-    board! : Board
+    @ManyToOne( () => List, (List) => List.cards, { onDelete: "CASCADE" })
+    list! : List
 
-    @OneToMany( () => List, (List) => List.card )
-    lists! : List[]
+    @OneToMany( () => Attachment, (Attachment) => Attachment.card )
+    attachments! : Attachment[]
+
+    @OneToMany( () => Comment, (Comment) => Comment.card )
+    comments! : Comment[]
+
+    @OneToMany( () => TodoList, (TodoList) => TodoList.card )
+    todolists! : TodoList[]
 }

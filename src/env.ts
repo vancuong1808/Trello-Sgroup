@@ -23,3 +23,13 @@ export const envDataBase : {
     DATABASE: process.env.DB_NAME || ""
 }
 
+export const envCloudinary : {
+    CLOUD_NAME: string,
+    API_KEY: string,
+    API_SECRET: string
+} = {
+    CLOUD_NAME: process.env.CLOUDINARY_NAME || "",
+    API_KEY: process.env.CLOUDINARY_API_KEY || "",
+    API_SECRET: process.env.CLOUDINARY_API_SECRET || ""
+}
+

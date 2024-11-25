@@ -5,7 +5,7 @@ import { In } from 'typeorm';
 class PermissionRepository {
     private readonly permissionRepository = mysqlSource.getRepository(Permission);
 
-    async findPermissionById( permissionId : number ) : Promise<Permission | null> {
+    async getPermissionById( permissionId : number ) : Promise<Permission | null> {
         const permission = await this.permissionRepository.findOne({
             select : ["id", "permissionName"],
             where : {
@@ -15,7 +15,7 @@ class PermissionRepository {
         return permission
     }
 
-    async findPermissionByName( name : string ) : Promise<Permission | null> {
+    async getPermissionByName( name : string ) : Promise<Permission | null> {
         const permission = await this.permissionRepository.findOne({
             select : ["id", "permissionName"],
             where : {
@@ -25,7 +25,7 @@ class PermissionRepository {
         return permission;
     }
 
-    async findAllPermission() : Promise<Permission[] | null> {
+    async getAllPermission() : Promise<Permission[] | null> {
         const permissions = await this.permissionRepository.find({
             select : ["id", "permissionName"],
             order : {
@@ -35,7 +35,7 @@ class PermissionRepository {
         return permissions;
     }
 
-    async findPermissionRelateWithRole( PermissionId : number ) : Promise<Permission | null> {
+    async getPermissionRelateWithRole( PermissionId : number ) : Promise<Permission | null> {
         const permissions = await this.permissionRepository.find({
             select : ["permissionName"],
             relations : ["roles"],
@@ -46,7 +46,7 @@ class PermissionRepository {
         return permissions[0];
     }
 
-    async findAllPermissionsRelateWithRole( roleId : number[] ) : Promise<Permission[] | null> {
+    async getAllPermissionsRelateWithRole( roleId : number[] ) : Promise<Permission[] | null> {
         const permissions = await this.permissionRepository.find({
             select : ["permissionName"],
             relations : ["roles"],

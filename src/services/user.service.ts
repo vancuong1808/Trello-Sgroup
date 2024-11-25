@@ -3,15 +3,16 @@ import { conflictError, badRequestError, notFoundError } from "../handlers/error
 import { User } from '../orm/entities/user.entity.ts';
 import UserRepository from '../repositories/user.repository.ts';
 import RoleRepository from '../repositories/role.repository.ts';
+import RedisClient from '../common/redis/redis.ts';
 
 class UserService {
     async getAllUsers() : Promise<Result> {
         try {
-            const users = await UserRepository.findAllUser();
+            const users = await UserRepository.getAllUser();
             if (!users) {
                 throw new notFoundError("Users not found");
             }
-            return new Result( true, 200, "Get all users successful", { users } );
+            return new Result( true, 200, "Get all users successful",  users );
         } catch (error : unknown) {
             throw error;
         }
@@ -19,11 +20,11 @@ class UserService {
 
     async getUserById( userId : number ) : Promise<Result> {
         try {
-            const user = await UserRepository.findUserById( userId );
+            const user = await UserRepository.getUserById( userId );
             if (!user) {
                 throw new notFoundError("User not found");
             }
-            return new Result( true, 200, "Get user successful", { user } );
+            return new Result( true, 200, "Get user successful", user );
         } catch (error : unknown) {
             throw error;
         }
@@ -31,7 +32,7 @@ class UserService {
 
     async deleteUser( userId : number ) : Promise<Result> {
         try {
-            const isExistedUser = await UserRepository.findUserById( userId );
+            const isExistedUser = await UserRepository.getUserById( userId );
             if (!isExistedUser) {
                 throw new notFoundError("User not found");
             }
@@ -44,7 +45,7 @@ class UserService {
 
     async updateUser( userId : number, user : Partial<User> ) : Promise<Result> {
         try {
-            const isExistedUser = await UserRepository.findUserById( userId );
+            const isExistedUser = await UserRepository.getUserById( userId );
             if (!isExistedUser) {
                 throw new notFoundError("User not found");
             }
@@ -57,15 +58,15 @@ class UserService {
 
     async assignRoleToUser( userId : number, roleId : number ) : Promise<Result> {
         try {
-            const isExistedUser = await UserRepository.findUserById( userId );
+            const isExistedUser = await UserRepository.getUserById( userId );
             if (!isExistedUser) {
                 throw new notFoundError("User not found");
             }
-            const isExistedRole = await RoleRepository.findRoleById( roleId );
+            const isExistedRole = await RoleRepository.getRoleById( roleId );
             if (!isExistedRole) {
                 throw new notFoundError("Role not found");
             }
-            const isExistedRoleFromUser = await UserRepository.findUserRelateWithRole( userId );
+            const isExistedRoleFromUser = await UserRepository.getUserRelateWithRole( userId );
             if (!isExistedRoleFromUser) {
                 throw new badRequestError("Find User relate with role fail");
             }
@@ -73,6 +74,10 @@ class UserService {
                 throw new conflictError("User already has this role");
             }
             await UserRepository.assignRoleToUser( isExistedRoleFromUser, isExistedRole );
+            const isExistedCachedRolesOfUser = await RedisClient.getString( `rolesOfUser:${ userId }` );
+            if (isExistedCachedRolesOfUser) {
+                await RedisClient.deleteString( `rolesOfUser:${ userId }` );
+            }
             return new Result( true, 200, "Assign role to user successful");
         } catch (error : unknown) {
             throw error;
@@ -81,15 +86,15 @@ class UserService {
 
     async removeRoleFromUser( userId : number, roleId : number ) : Promise<Result> {
         try {
-            const isExistedUser = await UserRepository.findUserById( userId );
+            const isExistedUser = await UserRepository.getUserById( userId );
             if (!isExistedUser) {
                 throw new notFoundError("User not found");
             }
-            const isExistedRole = await RoleRepository.findRoleById( roleId );
+            const isExistedRole = await RoleRepository.getRoleById( roleId );
             if (!isExistedRole) {
                 throw new notFoundError("Role not found");
             }
-            const isExistedRoleFromUser = await UserRepository.findUserRelateWithRole( userId );
+            const isExistedRoleFromUser = await UserRepository.getUserRelateWithRole( userId );
             if (!isExistedRoleFromUser) {
                 throw new badRequestError("Find User relate with role fail");
             }
@@ -97,6 +102,10 @@ class UserService {
                 throw new notFoundError("User has this role not found");
             }
             await UserRepository.removeRoleFromUser( isExistedRoleFromUser, isExistedRole );
+            const isExistedCachedRolesOfUser = await RedisClient.getString( `rolesOfUser:${ userId }` );
+            if (isExistedCachedRolesOfUser) {
+                await RedisClient.deleteString( `rolesOfUser:${ userId }` );
+            }
             return new Result( true, 200, "Remove role from user successful");
         } catch (error : unknown) {
             throw error;

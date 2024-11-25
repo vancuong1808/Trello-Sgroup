@@ -26,7 +26,7 @@ class RoleController {
 
     async getRoleById( req : Request, res : Response, next : NextFunction ) {
         try {
-            const roleId : number = Number( req.params.id );
+            const roleId : number = Number( req.params.roleId );
             const getRoleByIdResult = await roleService.getRoleById( roleId );
             responseHandler.ok( res, getRoleByIdResult.message, getRoleByIdResult.data || {} );
         } catch (error : unknown) {
@@ -36,7 +36,7 @@ class RoleController {
 
     async updateRole( req : Request, res : Response, next : NextFunction ) {
         try {
-            const roleId : number = Number( req.params.id );
+            const roleId : number = Number( req.params.roleId );
             const body : RoleBody = req.body;
             const updateRoleResult = await roleService.updateRole( roleId, body );
             responseHandler.ok( res, updateRoleResult.message, updateRoleResult.data || {} );
@@ -47,7 +47,7 @@ class RoleController {
 
     async deleteRole( req : Request, res : Response, next : NextFunction ) {
         try {
-            const roleId : number = Number( req.params.id );
+            const roleId : number = Number( req.params.roleId );
             const deleteRoleResult = await roleService.deleteRole( roleId );
             responseHandler.ok( res, deleteRoleResult.message, deleteRoleResult.data || {} );
         } catch (error : unknown) {
@@ -57,9 +57,9 @@ class RoleController {
 
     async assignPermissionToRole( req : Request, res : Response, next : NextFunction ) {
         try {
-            const roleId : number = Number( req.body.roleId );
-            const permissionId : number = Number( req.body.permissionId );
-            const assignRoleToUserResult = await roleService.assignRoleToPermission( roleId, permissionId );
+            const roleId : number = Number( req.params.roleId );
+            const permissionId : number = Number( req.params.permissionId );
+            const assignRoleToUserResult = await roleService.assignPermissionToRole( roleId, permissionId );
             responseHandler.ok( res, assignRoleToUserResult.message, assignRoleToUserResult.data || {} );
         } catch (error : unknown) {
             next( error );
@@ -68,9 +68,9 @@ class RoleController {
 
     async removePermissionFromRole( req : Request, res : Response, next : NextFunction ) {
         try {
-            const roleId : number = Number( req.params.id );
-            const permissionId : number = Number( req.body.permissionId );
-            const assignRoleToUserResult = await roleService.removeRoleFromPermission( roleId, permissionId );
+            const roleId : number = Number( req.params.roleId );
+            const permissionId : number = Number( req.params.permissionId );
+            const assignRoleToUserResult = await roleService.removePermissionFromRole( roleId, permissionId );
             responseHandler.ok( res, assignRoleToUserResult.message, assignRoleToUserResult.data || {} );
         } catch (error : unknown) {
             next( error );

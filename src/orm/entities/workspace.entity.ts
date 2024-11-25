@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn,  OneToMany, ManyToMany} from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn,  OneToMany } from "typeorm";
 import { Board } from "./board.entity";
-import { User } from "./user.entity";
+import { Notification } from "./notification.entity"
+import { UserWorkSpace } from "./userworkspace.entity";
 @Entity()
 export class WorkSpace {
     @PrimaryGeneratedColumn()
@@ -10,14 +11,17 @@ export class WorkSpace {
     workspaceName! : string
     
     @Column({ type : "varchar", length : 100 })
-    createdBy! : string
+    owner! : string
 
     @CreateDateColumn()
     createdAt! : Date
 
-    @ManyToMany( () => User, (User) => User.workspaces )
-    users! : User[]
-
     @OneToMany( () => Board, (Board) => Board.workspace )
     boards! : Board[]
+
+    @OneToMany( () => UserWorkSpace, (UserWorkspace) => UserWorkspace.workspace )
+    userWorkspaces! : UserWorkSpace[]
+
+    @OneToMany( () => Notification, (Notification) => Notification.workspace )
+    notifications! : Notification[]
 }

@@ -1,13 +1,15 @@
-import workspaceService from "../services/workspace.service";
-import responseHandler from "../handlers/response.handler";
 import { NextFunction, Request, Response } from "express";
-import { WorkSpaceBody } from "../common/typings/custom.interface";
+import SseClient from '../common/sse/sseClients.ts';
+import { CustomRequest, WorkSpaceBody } from "../common/typings/custom.interface";
+import responseHandler from "../handlers/response.handler";
+import workspaceService from "../services/workspace.service";
 
 class WorkSpaceController {
-    async addWorkspace(req: Request, res: Response, next: NextFunction) {
+    async addWorkspace(req: CustomRequest, res: Response, next: NextFunction) {
         try {
             const workspaceBody : WorkSpaceBody = req.body;
-            const workspace = await workspaceService.addWorkspace( workspaceBody );
+            const userId: string = typeof req.user === "string" ? req.user : req.user?.userId;
+            const workspace = await workspaceService.addWorkspace( userId, workspaceBody );
             responseHandler.created(res, workspace.message, workspace.data || {});
         }
         catch (error: unknown) {
@@ -27,7 +29,7 @@ class WorkSpaceController {
 
     async getWorkspaceById(req: Request, res: Response, next: NextFunction) {
         try {
-            const workspaceId = Number(req.params.id);
+            const workspaceId = Number(req.params.workspaceId);
             const workspace = await workspaceService.getWorkspaceById(workspaceId);
             responseHandler.ok(res, workspace.message, workspace.data || {});
         }
@@ -35,9 +37,45 @@ class WorkSpaceController {
             next(error);
         }
     }
+
+    async getWorkspaceByName(req: Request, res: Response, next: NextFunction) {
+        try {
+            const workspaceName = req.params.name;
+            const workspace = await workspaceService.getWorkspaceByName(workspaceName);
+            responseHandler.ok(res, workspace.message, workspace.data || {});
+        }
+        catch (error: unknown) {
+            next(error);
+        }
+    }
+
+    async addMemberToWorkspace(req: Request, res: Response, next: NextFunction) {
+        try {
+            const workspaceId = Number(req.params.workspaceId);
+            const userId = Number(req.params.userId);
+            const workspace = await workspaceService.addMemberToWorkspace(workspaceId, userId);
+            responseHandler.ok(res, workspace.message, workspace.data || {});
+        }
+        catch (error: unknown) {
+            next(error);
+        }
+    }
+
+    async removeMemberFromWorkspace(req: Request, res: Response, next: NextFunction) {
+        try {
+            const workspaceId = Number(req.params.workspaceId);
+            const userId = Number(req.params.userId);
+            const workspace = await workspaceService.removeMemberFromWorkspace(workspaceId, userId);
+            responseHandler.ok(res, workspace.message, workspace.data || {});
+        }
+        catch (error: unknown) {
+            next(error);
+        }
+    }
+
     async updateWorkspace(req: Request, res: Response, next: NextFunction) {
         try {
-            const workspaceId = Number(req.params.id);
+            const workspaceId = Number(req.params.workspaceId);
             const workspaceBody : WorkSpaceBody = req.body;
             const workspace = await workspaceService.updateWorkspace(workspaceId, workspaceBody);
             responseHandler.ok(res, workspace.message, workspace.data || {});
@@ -48,7 +86,7 @@ class WorkSpaceController {
     }
     async deleteWorkspace(req: Request, res: Response, next: NextFunction) {
         try {
-            const workspaceId = Number(req.params.id);
+            const workspaceId = Number(req.params.workspaceId);
             const workspace = await workspaceService.deleteWorkspace(workspaceId);
             responseHandler.ok(res, workspace.message, workspace.data || {});
         }

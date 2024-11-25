@@ -5,13 +5,13 @@ const customResponse : (
     statusCode : number,
     message : string | string[],
     isOk : boolean,
-    data? : object
+    data? : object | string
 ) => Response<unknown, Record<any, string>> = (
     res : Response,
     statusCode : number,
     message : string | string[],
     isOk : boolean,
-    data? : object
+    data? : object | string
 ) => { return res.status( statusCode ).json({
     isOk,
     statusCode,

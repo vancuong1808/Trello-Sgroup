@@ -1,9 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, ManyToOne, ManyToMany, JoinTable, DeleteDateColumn } from "typeorm";
-import { User } from "./user.entity"
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, OneToMany } from "typeorm";
+import { Board } from "./board.entity"
 import { Card } from "./card.entity"
-import { Notification } from "./notification.entity"
-import { File } from "./file.entity"
-import { Comment } from "./comment.entity"
 
 @Entity()
 export class List {
@@ -15,25 +12,10 @@ export class List {
 
     @CreateDateColumn()
     createdAt! : Date
-    
-    @DeleteDateColumn()
-    deletedAt! : Date
-    
-    @ManyToMany( () => User, (User) => User.lists )
-    @JoinTable({
-        name : "user_lists"
-    })
-    users! : User[]
 
-    @ManyToOne( () => Card, (Card) => Card.lists )
-    card! : Card
+    @ManyToOne( () => Board, (Board) => Board.lists, { onDelete: "CASCADE" })
+    board! : Board
 
-    @OneToMany( () => Notification, (Notification) => Notification.list )
-    notifications! : Notification[]
-
-    @OneToMany( () => File, (File) => File.list )
-    files! : File[]
-
-    @OneToMany( () => Comment, (Comment) => Comment.list )
-    comments! : Comment[]
+    @OneToMany( () => Card, (Card) => Card.list )
+    cards! : Card[]
 }

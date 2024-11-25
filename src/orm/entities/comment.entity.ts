@@ -1,11 +1,11 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, UpdateDateColumn } from "typeorm";
-import { List } from "./list.entity"
+import { Card } from "./card.entity"
 @Entity()
 export class Comment {
     @PrimaryGeneratedColumn()
     id! : number
 
-    @Column({ type : "varchar", length : 100 })
+    @Column({ type : "varchar", length : 100, nullable : true })
     comment! : string
 
     @CreateDateColumn()
@@ -14,6 +14,6 @@ export class Comment {
     @UpdateDateColumn()
     updatedAt! : Date
    
-    @ManyToOne( () => List, (List) => List.comments )
-    list! : List
+    @ManyToOne( () => Card, (Card) => Card.comments, { onDelete: "CASCADE" })
+    card! : Card
 }

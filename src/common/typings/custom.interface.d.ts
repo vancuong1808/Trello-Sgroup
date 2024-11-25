@@ -1,10 +1,10 @@
-import { Card } from './../../orm/entities/card.entity';
-import { WorkSpace } from './../../orm/entities/workspace.entity';
-import { Request } from "express";
+import { Request, Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
+import { File } from "multer";
 
 export interface CustomRequest extends Request {
     user? : string | JwtPayload
+    file? : File
 }
 
 export interface CustomError {
@@ -43,26 +43,37 @@ export interface UserBody {
     email: string
 }
 
-export interface UserRoleBody {
-    userId: number
-    roleId: number
-}
-
-export interface RolePermissionBody {
-    roleId: number
-    permissionId: number
-}
-
 export interface WorkSpaceBody {
     workspaceName: string
 }
 
 export interface BoardBody {
     boardName: string
-    workspaceId: number
+}
+
+export interface ListBody {
+    listName: string
 }
 
 export interface CardBody {
     cardName: string
-    boardId: number
+}
+
+export interface TodoListBody {
+    todoListName: string
+}
+
+export interface TodoBody {
+    todoName: string
+}
+
+export interface CommentBody {
+    comment: string
+}
+
+export interface Client {
+    id: Date
+    workspaceId: number
+    userId: number
+    res : Response
 }

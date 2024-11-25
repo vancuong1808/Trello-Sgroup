@@ -4,33 +4,58 @@ import { Board } from '../orm/entities/board.entity';
 export class BoardRepository {
     private readonly boardRepository = mysqlSource.getRepository(Board);
 
-    async getAllBoards(): Promise<Board[] | null> {
+    async getAllBoards( workspaceId : number ): Promise<Board[] | null> {
         const boards = await this.boardRepository.find({
             select : ["id", "boardName"],
             order : {
                 id : "ASC"
-            }
+            },
+            where : {
+                workspace : {
+                    id : workspaceId
+                }
+            },
+            relations : ["userBoards.user", "userBoards.role","lists"]
         });
         return boards;
     }
-    async getBoardById( id : number ): Promise<Board | null> {
+    async getBoardById( workspaceId : number, boardId : number ): Promise<Board | null> {
         const board = await this.boardRepository.findOne({
             select : ["id", "boardName"],
             where : {
-                id : id
-            }
+                id : boardId,
+                workspace : {
+                    id : workspaceId
+                },
+            },
+            relations : ["userBoards.user", "userBoards.role","lists"]
         });
         return board
     }
 
-    async getBoardByName( name : string ): Promise<Board | null> {
+    async getBoardByName( workspaceId : number, name : string ): Promise<Board | null> {
         const board = await this.boardRepository.findOne({
             select : ["id", "boardName"],
             where : {
-                boardName : name
-            }
+                boardName : name,
+                workspace : {
+                    id : workspaceId
+                },
+            },
+
+            relations : ["userBoards.user", "userBoards.role","lists"]
         });
         return board;
+    }
+
+    async getBoardRelateWithList( boardId : number ): Promise<Board | null> {
+        const boards = await this.boardRepository.find({
+            relations : ["lists"],
+            where : {
+                id : boardId
+            }
+        });
+        return boards[0];
     }
 
     async addBoard( board : Board ): Promise<Board | null> {
@@ -39,12 +64,12 @@ export class BoardRepository {
         return newBoard;
     }
 
-    async updateBoard( id : number, board : Partial<Board> ): Promise<void> {
-        await this.boardRepository.update( id, board );
+    async updateBoard( boardId : number, board : Partial<Board> ): Promise<void> {
+        await this.boardRepository.update( boardId, board );
     }
 
-    async deleteBoard( id : number ): Promise<void> {
-        await this.boardRepository.delete( id );
+    async deleteBoard( boardId : number ): Promise<void> {
+        await this.boardRepository.delete( boardId );
     }
 }
 export default new BoardRepository();

@@ -1,12 +1,11 @@
 import { User } from '../orm/entities/user.entity.ts';
 import { Role } from '../orm/entities/role.entity.ts';
 import { mysqlSource } from '../configs/data-source.config.ts';
-import { badRequestError } from "../handlers/errors/customError";
 
 class UserRepository {
     private readonly userRepository = mysqlSource.getRepository(User);
 
-    async findUserById( userId : number ) : Promise<User | null> {
+    async getUserById( userId : number ) : Promise<User | null> {
         const user = await this.userRepository.findOne({
             select : ["id", "email", "username"],
             where : {
@@ -16,7 +15,7 @@ class UserRepository {
         return user
     }
 
-    async findUserByEmail( email : string ) : Promise<User | null> {
+    async getUserByEmail( email : string ) : Promise<User | null> {
         const user = await this.userRepository.findOne({
             select : ["id", "email", "username", "password"],
             where : {
@@ -26,7 +25,7 @@ class UserRepository {
         return user;
     }
 
-    async findUserByUsername( username : string ) : Promise<User | null> {
+    async getUserByUsername( username : string ) : Promise<User | null> {
         const user = await this.userRepository.findOne({
             select : ["id", "email", "username", "password"],
             where : {
@@ -36,17 +35,18 @@ class UserRepository {
         return user;
     }
 
-    async findAllUser() : Promise<User[] | null> {
+    async getAllUser() : Promise<User[] | null> {
         const users = await this.userRepository.find({
             select : ["id", "email", "username"],
             order : {
                 id : 'ASC'
-            }
+            },
+            relations : ["roles"]
         });
         return users;
     }
 
-    async findUserRelateWithRole( userId : number ) : Promise<User | null> {
+    async getUserRelateWithRole( userId : number ) : Promise<User | null> {
         const users = await this.userRepository.find({
             select : ["id"],
             relations : ["roles"],

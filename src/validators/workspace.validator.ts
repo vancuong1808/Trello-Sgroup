@@ -1,6 +1,6 @@
 import { body } from "express-validator"
 
-export const validateWorkspaceName = [
+export const validateWorkspace = [
     body('workspaceName')
         .notEmpty().withMessage("Permission name must be not empty")
         .isLength({ min: 1, max: 32 }).withMessage("Permission name at least 1 characters and maximum 32 characters")

@@ -4,7 +4,7 @@ export class Result implements CustomResponseResult {
     isOk: boolean;
     status: number;
     message: string | string[];
-    data?: object | undefined;
+    data?: { value : object | string } | undefined;
   constructor(isOk: boolean, status: number, message: string | string[], data?: object | string ) {
     this.isOk = isOk;
     this.status = status;

@@ -26,7 +26,7 @@ class PermissionController {
 
     async getPermissionById( req : Request, res : Response, next : NextFunction ) {
         try {
-            const permissionId : number = Number( req.params.id );
+            const permissionId : number = Number( req.params.permissionId );
             const getPermissionByIdResult = await permissionService.getPermissionById( permissionId );
             responseHandler.ok( res, getPermissionByIdResult.message, getPermissionByIdResult.data || {} );
         } catch (error : unknown) {
@@ -36,7 +36,7 @@ class PermissionController {
 
     async updatePermission( req : Request, res : Response, next : NextFunction ) {
         try {
-            const permissionId : number = Number( req.params.id );
+            const permissionId : number = Number( req.params.permissionId );
             const body : PermissionBody = req.body;
             const updateRoleResult = await permissionService.updatePermission( permissionId, body );
             responseHandler.ok( res, updateRoleResult.message, updateRoleResult.data || {} );
@@ -47,7 +47,7 @@ class PermissionController {
 
     async deletePermission( req : Request, res : Response, next : NextFunction ) {
         try {
-            const permissionId : number = Number( req.params.id );
+            const permissionId : number = Number( req.params.permissionId );
             const deletePermissionResult = await permissionService.deletePermission( permissionId );
             responseHandler.ok( res, deletePermissionResult.message, deletePermissionResult.data || {} );
         } catch (error : unknown) {

@@ -6,7 +6,7 @@ import { mysqlSource } from "../configs/data-source.config";
 class RoleRepository {
     private readonly roleRepository = mysqlSource.getRepository(Role);
 
-    async findRoleById( roleId : number ) : Promise<Role | null> {
+    async getRoleById( roleId : number ) : Promise<Role | null> {
         const role = await this.roleRepository.findOne({
             select : ["id", "roleName"],
             where : {
@@ -16,7 +16,7 @@ class RoleRepository {
         return role
     }
 
-    async findRoleByName( name : string ) : Promise<Role | null> {
+    async getRoleByName( name : string ) : Promise<Role | null> {
         const role = await this.roleRepository.findOne({
             select : ["id", "roleName"],
             where : {
@@ -26,17 +26,18 @@ class RoleRepository {
         return role;
     }
 
-    async findAllRole() : Promise<Role[] | null> {
+    async getAllRole() : Promise<Role[] | null> {
         const roles = await this.roleRepository.find({
             select : ["id", "roleName"],
             order : {
                 id : 'ASC'
-            }
+            },
+            relations : ["permissions"]
         });
         return roles;
     }
 
-    async findRoleRelateWithPermission( roleId : number ) : Promise<Role | null> {
+    async getRoleRelateWithPermission( roleId : number ) : Promise<Role | null> {
         const roles = await this.roleRepository.find({
             relations : ["permissions"],
             where : {
@@ -46,7 +47,7 @@ class RoleRepository {
         return roles[0];
     }
 
-    async findRoleRelateWithUser( roleId : number ) : Promise<Role | null> {
+    async getRoleRelateWithUser( roleId : number ) : Promise<Role | null> {
         const roles = await this.roleRepository.find({
             select : ["id"],
             relations : ["users"],

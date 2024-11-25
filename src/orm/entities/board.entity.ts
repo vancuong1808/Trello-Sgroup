@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateColumn, ManyToOne, OneToMany } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, OneToMany } from "typeorm";
 import { WorkSpace } from "./workspace.entity";
-import { Card } from "./card.entity";
+import { List } from "./list.entity";
+import { UserBoard } from "./userboard.entity";
 @Entity()
 export class Board {
     @PrimaryGeneratedColumn()
@@ -12,12 +13,12 @@ export class Board {
     @CreateDateColumn()
     createdAt! : Date
 
-    @DeleteDateColumn()
-    deletedAt! : Date
-
-    @ManyToOne( () => WorkSpace, (WorkSpace) => WorkSpace.boards )
+    @ManyToOne( () => WorkSpace, (WorkSpace) => WorkSpace.boards, { onDelete: "CASCADE" })
     workspace! : WorkSpace
 
-    @OneToMany( () => Card, (Card) => Card.board )
-    cards! : Card[]
+    @OneToMany( () => UserBoard, (UserBoard) => UserBoard.board )
+    userBoards! : UserBoard[]
+
+    @OneToMany( () => List, (List) => List.board )
+    lists! : List[]
 }
