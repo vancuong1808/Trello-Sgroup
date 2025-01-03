@@ -17,7 +17,7 @@ class BoardService {
         if (!boards) {
             throw new notFoundError("Boards not found");
         }
-        return new Result( true, 200, "Get all boards successful", boards.values );
+        return new Result( true, 200, "Get all boards successful", boards );
     }      
     
     async getBoardById( boardId : number ) : Promise<Result> {

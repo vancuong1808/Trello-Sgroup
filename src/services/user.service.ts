@@ -77,8 +77,8 @@ class UserService {
         if (!isExistedRoleFromUser) {
             throw new badRequestError("Find User relate with role fail");
         }
-        if ( isExistedRoleFromUser.roles.length == 0 ) {
-            throw new notFoundError("User has this role not found");
+        if ( !isExistedRoleFromUser.roles.some( (role) => role.id === roleId ) ) {
+            throw new conflictError("User doesn't have this role");
         }
         await UserRepository.removeRoleFromUser( isExistedRoleFromUser, isExistedRole );
         const isExistedCachedRolesOfUser = await RedisClient.getString( `rolesOfUser:${ userId }` );

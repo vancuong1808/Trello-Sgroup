@@ -8,9 +8,9 @@ import CardValidator from '../../validators/card.validator.ts';
 import commentController from '../../controllers/comment.controller.ts';
 const commentRoute = express.Router();
 
-commentRoute.get('/comment', authenticate, RequiredPermissions(Permissions.VIEW_COMMENT), commentController.getAllComments);
+commentRoute.get('/comment', authenticate, commentController.getAllComments);
 
-commentRoute.get('/comment/:commentId', authenticate, RequiredPermissions(Permissions.VIEW_COMMENT), commentController.getCommentById);
+commentRoute.get('/comment/:commentId', authenticate, commentController.getCommentById);
 
 commentRoute.post('/comment', authenticate, CheckMemberInCard, RequiredPermissions(Permissions.ADD_COMMENT), CardValidator.validateAddCard, validateHandler, commentController.addComment);
 

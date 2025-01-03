@@ -25,7 +25,7 @@ class TodoListService {
         if (!todoLists) {
             throw new notFoundError("Todo lists not found");
         }
-        return new Result( true, 200, "Get todo lists successful", todoLists.values );
+        return new Result( true, 200, "Get todo lists successful", todoLists );
     }
 
     async getTodoListById( todolistId : number ) : Promise<Result> {

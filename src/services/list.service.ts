@@ -12,7 +12,7 @@ class ListService {
         if (!lists) {
             throw new notFoundError("Lists not found");
         }
-        return new Result( true, 200, "Get all lists successful", lists.values );
+        return new Result( true, 200, "Get all lists successful", lists );
     }
 
     async getListById( listId : number ) : Promise<Result> {

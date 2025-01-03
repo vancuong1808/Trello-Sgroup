@@ -8,9 +8,9 @@ import workspaceController from "../../controllers/workspace.controller";
 import { IsMemberOfWorkspace } from "../../middlewares/checkMember.middleware.ts";
 const workspaceRoute = express.Router();
 
-workspaceRoute.get("/workspace", authenticate, RequiredPermissions( Permissions.VIEW_WORKSPACE ), workspaceController.getAllWorkspaces );
+workspaceRoute.get("/workspace", authenticate, workspaceController.getAllWorkspaces );
 
-workspaceRoute.get("/workspace/:workspaceId", authenticate, RequiredPermissions( Permissions.VIEW_WORKSPACE ), workspaceController.getWorkspaceById );
+workspaceRoute.get("/workspace/:workspaceId", authenticate, workspaceController.getWorkspaceById );
 
 workspaceRoute.post("/workspace", authenticate, RequiredPermissions( Permissions.ADD_WORKSPACE ), WorkspaceValidator.validateAddWorkspace, validateHandler, workspaceController.addWorkspace );
 

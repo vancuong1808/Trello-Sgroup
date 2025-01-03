@@ -8,9 +8,9 @@ import { IsMemberOfBoard, CheckMemberInList } from "../../middlewares/checkMembe
 import listController from "../../controllers/list.controller";
 const listRoute = express.Router();
 
-listRoute.get("/list", authenticate, RequiredPermissions( Permissions.VIEW_LIST ), listController.getAllLists );
+listRoute.get("/list", authenticate, listController.getAllLists );
 
-listRoute.get("/list/:listId", authenticate, RequiredPermissions( Permissions.VIEW_LIST ), listController.getListById );
+listRoute.get("/list/:listId", authenticate, listController.getListById );
 
 listRoute.post("/list", authenticate, IsMemberOfBoard, RequiredPermissions( Permissions.ADD_LIST ), ListValidator.validateAddList, validateHandler, listController.addList );
 

@@ -8,9 +8,9 @@ import { IsMemberOfWorkspace, IsMemberOfBoard } from "../../middlewares/checkMem
 import boardController from "../../controllers/board.controller";
 const boardRoute = express.Router();
 
-boardRoute.get("/board", authenticate, RequiredPermissions( Permissions.VIEW_BOARD ), boardController.getAllBoards );
+boardRoute.get("/board", authenticate, boardController.getAllBoards );
 
-boardRoute.get("/board/:boardId", authenticate, RequiredPermissions( Permissions.VIEW_BOARD ), boardController.getBoardById );
+boardRoute.get("/board/:boardId", authenticate, boardController.getBoardById );
 
 boardRoute.post("/board", authenticate, IsMemberOfWorkspace, RequiredPermissions( Permissions.ADD_BOARD ), BoardValidator.validateAddBoard, validateHandler, boardController.addBoard );
 

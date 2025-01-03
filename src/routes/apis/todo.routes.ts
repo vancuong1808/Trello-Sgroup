@@ -8,9 +8,9 @@ import CardValidator from '../../validators/card.validator.ts';
 import todoController from '../../controllers/todo.controller.ts';
 const todoRoute = express.Router();
 
-todoRoute.get('/todo', authenticate, RequiredPermissions(Permissions.VIEW_TODO), todoController.getAllTodos);
+todoRoute.get('/todo', authenticate, todoController.getAllTodos);
 
-todoRoute.get('/todo/:todoId', authenticate, RequiredPermissions(Permissions.VIEW_TODO), todoController.getTodoById);
+todoRoute.get('/todo/:todoId', authenticate, todoController.getTodoById);
 
 todoRoute.post('/todo', authenticate, CheckMemberInTodoList, RequiredPermissions(Permissions.ADD_TODO), CardValidator.validateAddTodo, validateHandler, todoController.addTodo);
 

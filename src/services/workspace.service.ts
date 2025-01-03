@@ -17,7 +17,7 @@ class WorkspaceService {
         if (!workspaces) {
             throw new notFoundError("Workspaces not found");
         }
-        return new Result( true, 200, "Get all workspaces successful", workspaces.values );
+        return new Result( true, 200, "Get all workspaces successful", workspaces );
     }
 
     async getWorkspaceById( workspaceId : number ) : Promise<Result> {
@@ -88,10 +88,6 @@ class WorkspaceService {
         newUserWorkspace.workspace = isExistedWorkspace;
         newUserWorkspace.role = isExistedRole;
         await UserWorkspaceRepository.addMemberToWorkspace( newUserWorkspace ); 
-        // const notification = new Notification();
-        // notification.title = "New member added to workspace";
-        // notification.description = `${isExistedUser.username} added to workspace ${isExistedWorkspace.workspaceName}`;
-        // await WorkspaceRepository.addNotification( workspaceId, notification );
         return new Result( true, 201, "Member added to workspace successful" );
     }
 
@@ -109,42 +105,7 @@ class WorkspaceService {
             throw new notFoundError("Member of workspace not found");
         }
         await UserWorkspaceRepository.removeMemberFromWorkspace( isExistedMemberOfWorkspace.id );
-        // const notification = new Notification();
-        // notification.title = "Member removed from workspace";
-        // notification.description = `${isExistedUser.username} removed from workspace ${isExistedWorkspace.workspaceName}`;
-        // await WorkspaceRepository.addNotification( workspaceId, notification );
         return new Result( true, 200, "Member removed from workspace successful" );
-    }
-
-    async changeUserRole( workspaceId : number, userId : number, roleId : number ) : Promise<Result> {
-        const isExistedWorkspace = await WorkspaceRepository.getWorkspaceById( workspaceId );
-        if (!isExistedWorkspace) {
-            throw new notFoundError("Workspace not found");
-        }
-        const isExistedUser = await UserRepository.getUserById( userId );
-        if (!isExistedUser) {
-            throw new notFoundError("User not found");
-        }
-        const isExistedMemberOfWorkspace = await UserWorkspaceRepository.getMemberById( workspaceId, userId ); 
-        if (!isExistedMemberOfWorkspace) {
-            throw new notFoundError("Member of workspace not found");
-        }
-        const isExistedRole = await RoleRepository.getRoleById( roleId );
-        if (!isExistedRole) {
-            throw new notFoundError("Role not found");
-        }
-        if (isExistedRole.roleName === Roles.WORKSPACE_ADMIN) {
-            throw new conflictError("Cannot change role to workspace admin");
-        }
-        if (isExistedRole.roleName !== Roles.WORKSPACE_MEMBER ) {
-            throw new conflictError("Role not valid");
-        }
-        const newUserWorkspace = new UserWorkSpace();
-        newUserWorkspace.user = isExistedUser;
-        newUserWorkspace.workspace = isExistedWorkspace;
-        newUserWorkspace.role = isExistedRole;
-        await UserWorkspaceRepository.changeUserRole( isExistedMemberOfWorkspace.id ,newUserWorkspace ); 
-        return new Result( true, 200, "Change user role successful" );
     }
 
     async updateWorkspace( workspaceId : number, workspace : Partial<WorkSpace> ) : Promise<Result> {

@@ -85,7 +85,7 @@ class RoleService {
         if (!isExistedRoleFromPermission) {
             throw new badRequestError("Find Role relate with permission fail");
         }
-        if ( isExistedRoleFromPermission.permissions.some( (permission) => permission.id !== permissionId ) ) {
+        if ( !isExistedRoleFromPermission.permissions.some( (permission) => permission.id === permissionId ) ) {
             throw new conflictError("Role not has this permission");
         }
         await RoleRepository.removePermissionFromRole( isExistedRoleFromPermission, isExistedPermission );

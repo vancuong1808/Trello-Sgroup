@@ -26,7 +26,7 @@ class TodoService {
         if (!todos) {
             throw new notFoundError("Todos not found");
         }
-        return new Result( true, 200, "Get todos successful", todos.values );
+        return new Result( true, 200, "Get todos successful", todos );
     }
 
     async getTodoById( todoId : number ) : Promise<Result> {

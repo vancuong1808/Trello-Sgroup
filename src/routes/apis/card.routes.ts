@@ -8,9 +8,9 @@ import { CheckMemberInCard, CheckMemberInList } from "../../middlewares/checkMem
 import CardValidator from "../../validators/card.validator";
 const cardRoute = express.Router();
 
-cardRoute.get("/card", authenticate, RequiredPermissions( Permissions.VIEW_CARD ), cardController.getAllCards );
+cardRoute.get("/card", authenticate, cardController.getAllCards );
 
-cardRoute.get("/card/:cardId", authenticate, RequiredPermissions( Permissions.VIEW_CARD ), cardController.getCardById );
+cardRoute.get("/card/:cardId", authenticate, cardController.getCardById );
 
 cardRoute.post("/card", authenticate, CheckMemberInList, RequiredPermissions( Permissions.ADD_CARD ), CardValidator.validateAddCard, validateHandler, cardController.addCard );
 

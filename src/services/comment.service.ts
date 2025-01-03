@@ -29,7 +29,7 @@ class CommentService {
         if (!comments) {
             throw new notFoundError("Comments not found");
         }
-        return new Result( true, 200, "Get comments successful", comments.values );
+        return new Result( true, 200, "Get comments successful", comments );
     }
 
 

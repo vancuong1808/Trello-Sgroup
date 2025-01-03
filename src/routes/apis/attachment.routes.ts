@@ -13,6 +13,6 @@ uploadRoute.post("/attachment/upload", authenticate, CheckMemberInCard, Required
 
 uploadRoute.delete("/attachment/:attachmentId", authenticate, CheckMemberInCard, RequiredPermissions( Permissions.DELETE_ATTACHMENT ), attachmentController.deleteAttachment );
 
-uploadRoute.get("/attachment/:attachmentId", authenticate, CheckMemberInCard, RequiredPermissions( Permissions.VIEW_ATTACHMENT ), attachmentController.getAttachmentById );
+uploadRoute.get("/attachment/:attachmentId", authenticate, attachmentController.getAttachmentById );
 
 export default uploadRoute
