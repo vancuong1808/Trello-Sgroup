@@ -1,8 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, ManyToOne } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, ManyToOne, ManyToMany, JoinTable } from "typeorm";
 import { List } from "./list.entity"
 import { Attachment } from "./attachment.entity"
 import { Comment } from "./comment.entity"
 import { TodoList } from "./todolist.entity"
+import { User } from "./user.entity"
 
 @Entity()
 export class Card {
@@ -26,4 +27,10 @@ export class Card {
 
     @OneToMany( () => TodoList, (TodoList) => TodoList.card )
     todolists! : TodoList[]
+
+    @ManyToMany( () => User, (User) => User.cards )
+    @JoinTable({
+        name : "user_cards"
+    })
+    users! : User[]
 }

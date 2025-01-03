@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, UpdateDateColumn } from "typeorm";
 import { Card } from "./card.entity"
+import { User } from "./user.entity"
 @Entity()
 export class Comment {
     @PrimaryGeneratedColumn()
@@ -16,4 +17,7 @@ export class Comment {
    
     @ManyToOne( () => Card, (Card) => Card.comments, { onDelete: "CASCADE" })
     card! : Card
+
+    @ManyToOne( () => User, (User) => User.comments, { onDelete: "CASCADE" })
+    user! : User
 }

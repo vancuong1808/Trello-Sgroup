@@ -51,8 +51,8 @@ class WorkSpaceController {
 
     async addMemberToWorkspace(req: Request, res: Response, next: NextFunction) {
         try {
-            const workspaceId = Number(req.params.workspaceId);
-            const userId = Number(req.params.userId);
+            const workspaceId = Number(req.body.workspaceId);
+            const userId = Number(req.body.userId);
             const workspace = await workspaceService.addMemberToWorkspace(workspaceId, userId);
             responseHandler.ok(res, workspace.message, workspace.data || {});
         }
@@ -63,8 +63,8 @@ class WorkSpaceController {
 
     async removeMemberFromWorkspace(req: Request, res: Response, next: NextFunction) {
         try {
-            const workspaceId = Number(req.params.workspaceId);
-            const userId = Number(req.params.userId);
+            const workspaceId = Number(req.body.workspaceId);
+            const userId = Number(req.body.userId);
             const workspace = await workspaceService.removeMemberFromWorkspace(workspaceId, userId);
             responseHandler.ok(res, workspace.message, workspace.data || {});
         }

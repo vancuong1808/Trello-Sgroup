@@ -13,193 +13,156 @@ import { JwtPayload } from 'jsonwebtoken';
 
 class WorkspaceService {
     async getAllWorkspace() : Promise<Result> {
-        try {
-            const workspaces = await WorkspaceRepository.getAllWorkspace();
-            if (!workspaces) {
-                throw new notFoundError("Workspaces not found");
-            }
-            return new Result( true, 200, "Get all workspaces successful", workspaces );
-        } catch (error : unknown) {
-            throw error;
+        const workspaces = await WorkspaceRepository.getAllWorkspace();
+        if (!workspaces) {
+            throw new notFoundError("Workspaces not found");
         }
+        return new Result( true, 200, "Get all workspaces successful", workspaces.values );
     }
 
     async getWorkspaceById( workspaceId : number ) : Promise<Result> {
-        try {
-            const workspace = await WorkspaceRepository.getWorkspaceById( workspaceId );
-            if (!workspace) {
-                throw new notFoundError("Workspace not found");
-            }
-            return new Result( true, 200, "Get workspace successful",  workspace );
-        } catch (error : unknown) {
-            throw error;
+        const workspace = await WorkspaceRepository.getWorkspaceById( workspaceId );
+        if (!workspace) {
+            throw new notFoundError("Workspace not found");
         }
+        return new Result( true, 200, "Get workspace successful",  workspace );
     }
 
     async getWorkspaceByName( name : string ) : Promise<Result> {
-        try {
-            const workspace = await WorkspaceRepository.getWorkspaceByName( name );
-            if (!workspace) {
-                throw new notFoundError("Workspace not found");
-            }
-            return new Result( true, 200, "Get workspace successful", { workspace } );
-        } catch (error : unknown) {
-            throw error;
+        const workspace = await WorkspaceRepository.getWorkspaceByName( name );
+        if (!workspace) {
+            throw new notFoundError("Workspace not found");
         }
+        return new Result( true, 200, "Get workspace successful", { workspace } );
     }
 
     async addWorkspace( owner : string | JwtPayload, workspace : WorkSpaceBody ) : Promise<Result> {
-        try {
-            const userId : string = typeof owner === "string" ? owner : owner.userId;
-            const isExistedUser = await UserRepository.getUserById( Number( userId ) );
-            if (!isExistedUser) {
-                throw new notFoundError("User not found");
-            }
-            const isExistedWorkspace = await WorkspaceRepository.getWorkspaceByName( workspace.workspaceName );
-            if (isExistedWorkspace) {
-                throw new conflictError("Workspace already exists");
-            }
-            const isExistedRole = await RoleRepository.getRoleByName( Roles.WORKSPACE_ADMIN );
-            if (!isExistedRole) {
-                throw new notFoundError("Role not found");
-            }
-            const newWorkspace = new WorkSpace();
-            newWorkspace.workspaceName = workspace.workspaceName;
-            newWorkspace.owner = isExistedUser.username;
-            await WorkspaceRepository.addWorkspace( newWorkspace );
-            const newUserWorkspace = new UserWorkSpace();
-            newUserWorkspace.user = isExistedUser;
-            const checkWorkspace = await WorkspaceRepository.getWorkspaceByName( workspace.workspaceName );
-            if (!checkWorkspace) {
-                throw new notFoundError("Workspace not found");
-            }
-            newUserWorkspace.workspace = checkWorkspace;
-            newUserWorkspace.role = isExistedRole;
-            await UserWorkspaceRepository.addMemberToWorkspace( newUserWorkspace );
-            return new Result( true, 201, "Workspace created successful");
-        } catch (error : unknown) {
-            throw error;
+        const userId : string = typeof owner === "string" ? owner : owner.userId;
+        const isExistedUser = await UserRepository.getUserById( Number( userId ) );
+        if (!isExistedUser) {
+            throw new notFoundError("User not found");
         }
+        const isExistedWorkspace = await WorkspaceRepository.getWorkspaceByName( workspace.workspaceName );
+        if (isExistedWorkspace) {
+            throw new conflictError("Workspace already exists");
+        }
+        const isExistedRole = await RoleRepository.getRoleByName( Roles.WORKSPACE_ADMIN );
+        if (!isExistedRole) {
+            throw new notFoundError("Role not found");
+        }
+        const newWorkspace = new WorkSpace();
+        newWorkspace.workspaceName = workspace.workspaceName;
+        newWorkspace.owner = isExistedUser.username;
+        await WorkspaceRepository.addWorkspace( newWorkspace );
+        const newUserWorkspace = new UserWorkSpace();
+        newUserWorkspace.user = isExistedUser;
+        const checkWorkspace = await WorkspaceRepository.getWorkspaceByName( workspace.workspaceName );
+        if (!checkWorkspace) {
+            throw new notFoundError("Workspace not found");
+        }
+        newUserWorkspace.workspace = checkWorkspace;
+        newUserWorkspace.role = isExistedRole;
+        await UserWorkspaceRepository.addMemberToWorkspace( newUserWorkspace );
+        return new Result( true, 201, "Workspace created successful");
     }
 
     async addMemberToWorkspace( workspaceId : number, userId : number ) : Promise<Result> {
-        try {
-            const isExistedWorkspace = await WorkspaceRepository.getWorkspaceById( workspaceId );
-            if (!isExistedWorkspace) {
-                throw new notFoundError("Workspace not found");
-            }
-            const isExistedUser = await UserRepository.getUserById( userId );
-            if (!isExistedUser) {
-                throw new notFoundError("User not found");
-            }
-            const isExistedMemberOfWorkspace = await UserWorkspaceRepository.getMemberById( workspaceId, userId ); 
-            if (isExistedMemberOfWorkspace) {
-                throw new notFoundError("Member of workspace already exists");
-            }
-            const isExistedRole = await RoleRepository.getRoleByName( Roles.WORKSPACE_MEMBER);
-            if (!isExistedRole) {
-                throw new notFoundError("Role not found");
-            }
-            const newUserWorkspace = new UserWorkSpace();
-            newUserWorkspace.user = isExistedUser;
-            newUserWorkspace.workspace = isExistedWorkspace;
-            newUserWorkspace.role = isExistedRole;
-            await UserWorkspaceRepository.addMemberToWorkspace( newUserWorkspace ); 
-            const notification = new Notification();
-            notification.title = "New member added to workspace";
-            notification.description = `${isExistedUser.username} added to workspace ${isExistedWorkspace.workspaceName}`;
-            await WorkspaceRepository.addNotification( workspaceId, notification );
-            return new Result( true, 201, "Member added to workspace successful" );
-        } catch (error : unknown) {
-            throw error;
+        const isExistedWorkspace = await WorkspaceRepository.getWorkspaceById( workspaceId );
+        if (!isExistedWorkspace) {
+            throw new notFoundError("Workspace not found");
         }
+        const isExistedUser = await UserRepository.getUserById( userId );
+        if (!isExistedUser) {
+            throw new notFoundError("User not found");
+        }
+        const isExistedMemberOfWorkspace = await UserWorkspaceRepository.getMemberById( workspaceId, userId ); 
+        if (isExistedMemberOfWorkspace) {
+            throw new notFoundError("Member of workspace already exists");
+        }
+        const isExistedRole = await RoleRepository.getRoleByName( Roles.WORKSPACE_MEMBER);
+        if (!isExistedRole) {
+            throw new notFoundError("Role not found");
+        }
+        const newUserWorkspace = new UserWorkSpace();
+        newUserWorkspace.user = isExistedUser;
+        newUserWorkspace.workspace = isExistedWorkspace;
+        newUserWorkspace.role = isExistedRole;
+        await UserWorkspaceRepository.addMemberToWorkspace( newUserWorkspace ); 
+        const notification = new Notification();
+        notification.title = "New member added to workspace";
+        notification.description = `${isExistedUser.username} added to workspace ${isExistedWorkspace.workspaceName}`;
+        await WorkspaceRepository.addNotification( workspaceId, notification );
+        return new Result( true, 201, "Member added to workspace successful" );
     }
 
     async removeMemberFromWorkspace( workspaceId : number, userId : number ) : Promise<Result> {
-        try { 
-            const isExistedWorkspace = await WorkspaceRepository.getWorkspaceById( workspaceId );
-            if (!isExistedWorkspace) {
-                throw new notFoundError("Workspace not found");
-            }
-            const isExistedUser = await UserRepository.getUserById( userId );
-            if (!isExistedUser) {
-                throw new notFoundError("User not found");
-            }
-            const isExistedMemberOfWorkspace = await UserWorkspaceRepository.getMemberById( workspaceId, userId ); 
-            if (!isExistedMemberOfWorkspace) {
-                throw new notFoundError("Member of workspace not found");
-            }
-            await UserWorkspaceRepository.removeMemberFromWorkspace( isExistedMemberOfWorkspace.id );
-            const notification = new Notification();
-            notification.title = "Member removed from workspace";
-            notification.description = `${isExistedUser.username} removed from workspace ${isExistedWorkspace.workspaceName}`;
-            await WorkspaceRepository.addNotification( workspaceId, notification );
-            return new Result( true, 200, "Member removed from workspace successful" );
-        } catch (error : unknown) {
-            throw error;
+        const isExistedWorkspace = await WorkspaceRepository.getWorkspaceById( workspaceId );
+        if (!isExistedWorkspace) {
+            throw new notFoundError("Workspace not found");
         }
+        const isExistedUser = await UserRepository.getUserById( userId );
+        if (!isExistedUser) {
+            throw new notFoundError("User not found");
+        }
+        const isExistedMemberOfWorkspace = await UserWorkspaceRepository.getMemberById( workspaceId, userId ); 
+        if (!isExistedMemberOfWorkspace) {
+            throw new notFoundError("Member of workspace not found");
+        }
+        await UserWorkspaceRepository.removeMemberFromWorkspace( isExistedMemberOfWorkspace.id );
+        const notification = new Notification();
+        notification.title = "Member removed from workspace";
+        notification.description = `${isExistedUser.username} removed from workspace ${isExistedWorkspace.workspaceName}`;
+        await WorkspaceRepository.addNotification( workspaceId, notification );
+        return new Result( true, 200, "Member removed from workspace successful" );
     }
 
     async changeUserRole( workspaceId : number, userId : number, roleId : number ) : Promise<Result> {
-        try {
-            const isExistedWorkspace = await WorkspaceRepository.getWorkspaceById( workspaceId );
-            if (!isExistedWorkspace) {
-                throw new notFoundError("Workspace not found");
-            }
-            const isExistedUser = await UserRepository.getUserById( userId );
-            if (!isExistedUser) {
-                throw new notFoundError("User not found");
-            }
-            const isExistedMemberOfWorkspace = await UserWorkspaceRepository.getMemberById( workspaceId, userId ); 
-            if (!isExistedMemberOfWorkspace) {
-                throw new notFoundError("Member of workspace not found");
-            }
-            const isExistedRole = await RoleRepository.getRoleById( roleId );
-            if (!isExistedRole) {
-                throw new notFoundError("Role not found");
-            }
-            if (isExistedRole.roleName === Roles.WORKSPACE_ADMIN) {
-                throw new conflictError("Cannot change role to workspace admin");
-            }
-            if (isExistedRole.roleName !== Roles.WORKSPACE_MEMBER ) {
-                throw new conflictError("Role not valid");
-            }
-            const newUserWorkspace = new UserWorkSpace();
-            newUserWorkspace.user = isExistedUser;
-            newUserWorkspace.workspace = isExistedWorkspace;
-            newUserWorkspace.role = isExistedRole;
-            await UserWorkspaceRepository.changeUserRole( isExistedMemberOfWorkspace.id ,newUserWorkspace ); 
-            return new Result( true, 200, "Change user role successful" );
-        } catch (error : unknown) {
-            throw error;
+        const isExistedWorkspace = await WorkspaceRepository.getWorkspaceById( workspaceId );
+        if (!isExistedWorkspace) {
+            throw new notFoundError("Workspace not found");
         }
+        const isExistedUser = await UserRepository.getUserById( userId );
+        if (!isExistedUser) {
+            throw new notFoundError("User not found");
+        }
+        const isExistedMemberOfWorkspace = await UserWorkspaceRepository.getMemberById( workspaceId, userId ); 
+        if (!isExistedMemberOfWorkspace) {
+            throw new notFoundError("Member of workspace not found");
+        }
+        const isExistedRole = await RoleRepository.getRoleById( roleId );
+        if (!isExistedRole) {
+            throw new notFoundError("Role not found");
+        }
+        if (isExistedRole.roleName === Roles.WORKSPACE_ADMIN) {
+            throw new conflictError("Cannot change role to workspace admin");
+        }
+        if (isExistedRole.roleName !== Roles.WORKSPACE_MEMBER ) {
+            throw new conflictError("Role not valid");
+        }
+        const newUserWorkspace = new UserWorkSpace();
+        newUserWorkspace.user = isExistedUser;
+        newUserWorkspace.workspace = isExistedWorkspace;
+        newUserWorkspace.role = isExistedRole;
+        await UserWorkspaceRepository.changeUserRole( isExistedMemberOfWorkspace.id ,newUserWorkspace ); 
+        return new Result( true, 200, "Change user role successful" );
     }
 
     async updateWorkspace( workspaceId : number, workspace : Partial<WorkSpace> ) : Promise<Result> {
-        try {
-            const isExistedWorkspace = await WorkspaceRepository.getWorkspaceById( workspaceId );
-            if (!isExistedWorkspace) {
-                throw new notFoundError("Workspace not found");
-            }
-            await WorkspaceRepository.updateWorkspace( workspaceId, workspace );
-            return new Result( true, 200, "Workspace updated successful" );
-        } catch (error : unknown) {
-            throw error;
+        const isExistedWorkspace = await WorkspaceRepository.getWorkspaceById( workspaceId );
+        if (!isExistedWorkspace) {
+            throw new notFoundError("Workspace not found");
         }
+        await WorkspaceRepository.updateWorkspace( workspaceId, workspace );
+        return new Result( true, 200, "Workspace updated successful" );
     }
 
     async deleteWorkspace( workspaceId : number ) : Promise<Result> {
-        try {
-            const isExistedWorkspace = await WorkspaceRepository.getWorkspaceById( workspaceId );
-            if (!isExistedWorkspace) {
-                throw new notFoundError("Workspace not found");
-            }
-            await WorkspaceRepository.deleteWorkspace( workspaceId );
-            return new Result( true, 200, "Workspace deleted successful" );
-        } catch (error : unknown) {
-            throw error;
+        const isExistedWorkspace = await WorkspaceRepository.getWorkspaceById( workspaceId );
+        if (!isExistedWorkspace) {
+            throw new notFoundError("Workspace not found");
         }
+        await WorkspaceRepository.deleteWorkspace( workspaceId );
+        return new Result( true, 200, "Workspace deleted successful" );
     }
 }
-
 export default new WorkspaceService();

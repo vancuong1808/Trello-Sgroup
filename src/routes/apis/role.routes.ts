@@ -2,25 +2,25 @@ import { RequiredPermissions } from './../../middlewares/permission.middleware';
 import express from "express";
 import roleController from "../../controllers/role.controller";
 import { authenticate } from "../../middlewares/auth.middleware";
-import { validateRole } from "../../validators/role.validator";
+import RoleValidator from "../../validators/role.validator";
 import { validateHandler } from "../../handlers/validator.handler";
 import { Permissions } from '../../common/enums/permissions';
 
 const roleRoute = express.Router();
 
-roleRoute.post("/add", authenticate, RequiredPermissions( Permissions.ADD_ROLE ), validateRole, validateHandler, roleController.addRole );
+roleRoute.post("/role", authenticate, RequiredPermissions( Permissions.ADD_ROLE ), RoleValidator.validateAddRole, validateHandler, roleController.addRole );
 
-roleRoute.get("/get/:roleId", authenticate, RequiredPermissions( Permissions.VIEW_ROLE ), roleController.getRoleById );
+roleRoute.get("/role/:roleId", authenticate, RequiredPermissions( Permissions.VIEW_ROLE ), roleController.getRoleById );
 
-roleRoute.get("/get/", authenticate, RequiredPermissions( Permissions.VIEW_ROLE ), roleController.getAllRoles );
+roleRoute.get("/role", authenticate, RequiredPermissions( Permissions.VIEW_ROLE ), roleController.getAllRoles );
 
-roleRoute.put("/update/:roleId", authenticate, RequiredPermissions( Permissions.UPDATE_ROLE ), validateRole, validateHandler, roleController.updateRole );
+roleRoute.put("/role/:roleId", authenticate, RequiredPermissions( Permissions.UPDATE_ROLE ), RoleValidator.validateUpdateRole, validateHandler, roleController.updateRole );
 
-roleRoute.delete("/delete/:roleId", authenticate, RequiredPermissions( Permissions.DELETE_ROLE ), roleController.deleteRole );
+roleRoute.delete("/role/:roleId", authenticate, RequiredPermissions( Permissions.DELETE_ROLE ), roleController.deleteRole );
 
-roleRoute.post("/assign/permission/:permissionId/role/:roleId", authenticate, RequiredPermissions( Permissions.ASSIGN_ROLE_TO_USER ), roleController.assignPermissionToRole );
+roleRoute.post("/role/assign/permission", authenticate, RequiredPermissions( Permissions.ASSIGN_ROLE_TO_USER ), RoleValidator.validatePermissionOfRole, validateHandler, roleController.assignPermissionToRole );
 
-roleRoute.delete("/remove/permission/:permissionId/role/:roleId", authenticate, RequiredPermissions( Permissions.REMOVE_ROLE_FROM_USER ), roleController.removePermissionFromRole );
+roleRoute.delete("/role/remove/permission", authenticate, RequiredPermissions( Permissions.REMOVE_ROLE_FROM_USER ), RoleValidator.validatePermissionOfRole, validateHandler, roleController.removePermissionFromRole );
 
 
 export default roleRoute

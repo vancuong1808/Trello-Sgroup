@@ -6,8 +6,7 @@ import boardService from "../services/board.service";
 class BoardController {
     async getAllBoards( req : Request, res : Response, next : NextFunction ) {
         try {
-            const workspaceId = Number( req.params.workspaceId );
-            const boards = await boardService.getAllBoards( workspaceId );
+            const boards = await boardService.getAllBoards( );
             responseHandler.ok( res, boards.message, boards.data || {} );
         } catch (error : unknown) {
             next( error );
@@ -16,9 +15,8 @@ class BoardController {
 
     async getBoardById( req : Request, res : Response, next : NextFunction ) {
         try {
-            const workspaceId = Number( req.params.workspaceId );
             const boardId = Number( req.params.boardId );
-            const board = await boardService.getBoardById( workspaceId, boardId );
+            const board = await boardService.getBoardById( boardId );
             responseHandler.ok( res, board.message, board.data || {} );
         } catch (error : unknown) {
             next( error );
@@ -27,8 +25,8 @@ class BoardController {
 
     async addBoard( req : CustomRequest, res : Response, next : NextFunction ) {
         try {
-            const workspaceId = Number( req.params.workspaceId );
-            const boardBody : BoardBody = req.body;
+            const workspaceId = Number( req.body.workspaceId );
+            const boardBody : BoardBody = req.body.boardName;
             const userId: string = typeof req.user === "string" ? req.user : req.user?.userId;
             const board = await boardService.addBoard( userId, workspaceId, boardBody );
             responseHandler.created( res, board.message, board.data || {} );
@@ -39,10 +37,9 @@ class BoardController {
 
     async updateBoard( req : Request, res : Response, next : NextFunction ) {
         try {
-            const workspaceId = Number( req.params.workspaceId );
             const boardId = Number( req.params.boardId );
-            const boardBody : BoardBody = req.body;
-            const board = await boardService.updateBoard( workspaceId, boardId, boardBody );
+            const boardBody : BoardBody = req.body.boardName;
+            const board = await boardService.updateBoard( boardId, boardBody );
             responseHandler.ok( res, board.message, board.data || {} );
         } catch (error : unknown) {
             next( error );
@@ -51,9 +48,8 @@ class BoardController {
 
     async deleteBoard( req : Request, res : Response, next : NextFunction ) {
         try {
-            const workspaceId = Number( req.params.workspaceId );
             const boardId = Number( req.params.boardId );
-            const result = await boardService.deleteBoard( workspaceId, boardId );
+            const result = await boardService.deleteBoard(  boardId );
             responseHandler.ok( res, result.message, result.data || {} );
         } catch (error : unknown) {
             next( error );
@@ -62,10 +58,9 @@ class BoardController {
 
     async addMemberToBoard( req : Request, res : Response, next : NextFunction ) {
         try {
-            const workspaceId = Number( req.params.workspaceId );
-            const boardId = Number( req.params.boardId );
-            const userId = Number( req.params.userId );
-            const result = await boardService.addMemberToBoard( workspaceId, boardId, userId );
+            const boardId = Number( req.body.boardId );
+            const userId = Number( req.body.userId );
+            const result = await boardService.addMemberToBoard( boardId, userId );
             responseHandler.ok( res, result.message, result.data || {} );
         } catch (error : unknown) {
             next( error );
@@ -74,10 +69,9 @@ class BoardController {
 
     async removeMemberFromBoard( req : Request, res : Response, next : NextFunction ) {
         try {
-            const workspaceId = Number( req.params.workspaceId );
-            const boardId = Number( req.params.boardId );
-            const userId = Number( req.params.userId );
-            const result = await boardService.removeMemberFromBoard( workspaceId, boardId, userId );
+            const boardId = Number( req.body.boardId );
+            const userId = Number( req.body.userId );
+            const result = await boardService.removeMemberFromBoard( boardId, userId );
             responseHandler.ok( res, result.message, result.data || {} );
         } catch (error : unknown) {
             next( error );

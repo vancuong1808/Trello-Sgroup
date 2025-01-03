@@ -1,12 +1,12 @@
-import { Response, NextFunction } from "express";
-import { badRequestError, forbiddenError, unauthorizedError } from "../handlers/errors/customError";
+import { NextFunction, Response } from "express";
 import { CustomRequest } from "../common/typings/custom.interface.d";
+import { badRequestError, forbiddenError, unauthorizedError } from "../handlers/errors/customError";
+import { Role } from "../orm/entities/role.entity";
+import PermissionRepository from "../repositories/permission.repository";
 import UserRepository from "../repositories/user.repository";
 import UserBoardRepository from "../repositories/userboard.repository";
 import UserWorkspaceRepository from "../repositories/userworkspace.repository";
-import PermissionRepository from "../repositories/permission.repository";
-import { Role } from "../orm/entities/role.entity";
-import RedisClient from "../common/redis/redis";
+import RedisClient from "../utils/redis/redis";
 
 export const RequiredPermissions : (
     requiredPermission : string

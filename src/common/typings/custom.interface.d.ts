@@ -60,7 +60,7 @@ export interface CardBody {
 }
 
 export interface TodoListBody {
-    todoListName: string
+    todolistName: string
 }
 
 export interface TodoBody {

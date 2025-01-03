@@ -57,8 +57,8 @@ class RoleController {
 
     async assignPermissionToRole( req : Request, res : Response, next : NextFunction ) {
         try {
-            const roleId : number = Number( req.params.roleId );
-            const permissionId : number = Number( req.params.permissionId );
+            const roleId : number = Number( req.body.roleId );
+            const permissionId : number = Number( req.body.permissionId );
             const assignRoleToUserResult = await roleService.assignPermissionToRole( roleId, permissionId );
             responseHandler.ok( res, assignRoleToUserResult.message, assignRoleToUserResult.data || {} );
         } catch (error : unknown) {
@@ -68,8 +68,8 @@ class RoleController {
 
     async removePermissionFromRole( req : Request, res : Response, next : NextFunction ) {
         try {
-            const roleId : number = Number( req.params.roleId );
-            const permissionId : number = Number( req.params.permissionId );
+            const roleId : number = Number( req.body.roleId );
+            const permissionId : number = Number( req.body.permissionId );
             const assignRoleToUserResult = await roleService.removePermissionFromRole( roleId, permissionId );
             responseHandler.ok( res, assignRoleToUserResult.message, assignRoleToUserResult.data || {} );
         } catch (error : unknown) {

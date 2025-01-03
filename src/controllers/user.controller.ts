@@ -46,8 +46,8 @@ class UserController {
 
     async assignRoleToUser( req : Request, res : Response, next : NextFunction ) {
         try {
-            const userId : number = Number( req.params.userId );
-            const roleId : number = Number( req.params.roleId );
+            const userId : number = Number( req.body.userId );
+            const roleId : number = Number( req.body.roleId );
             const assignResult = await userService.assignRoleToUser( userId, roleId );
             responseHandler.ok( res, assignResult.message, assignResult.data || {} );
         } catch (error : unknown) {
@@ -57,8 +57,8 @@ class UserController {
 
     async removeRoleFromUser( req : Request, res : Response, next : NextFunction ) {
         try {
-            const userId : number = Number( req.params.userId );
-            const roleId : number = Number( req.params.roleId );
+            const userId : number = Number( req.body.userId );
+            const roleId : number = Number( req.body.roleId );
             const assignResult = await userService.removeRoleFromUser( userId, roleId );
             responseHandler.ok( res, assignResult.message, assignResult.data || {} );
         } catch (error : unknown) {

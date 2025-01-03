@@ -1,5 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToMany} from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToMany, OneToMany, ManyToOne} from "typeorm";
 import { Role } from "./role.entity"
+import { Comment } from "./comment.entity";
+import { Card } from "./card.entity";
 
 @Entity()
 export class User {
@@ -17,6 +19,12 @@ export class User {
 
     @CreateDateColumn()
     createdAt! : Date
+
+    @OneToMany( () => Comment, (Comment) => Comment.user )
+    comments! : Comment[]
+
+    @ManyToMany( () => Card, (Card) => Card.users )
+    cards! : Card[]
 
     @ManyToMany( () => Role, (Role) => Role.users )
     roles! : Role[]

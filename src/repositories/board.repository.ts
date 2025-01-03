@@ -4,7 +4,40 @@ import { Board } from '../orm/entities/board.entity';
 export class BoardRepository {
     private readonly boardRepository = mysqlSource.getRepository(Board);
 
-    async getAllBoards( workspaceId : number ): Promise<Board[] | null> {
+    async getAllBoards(): Promise<Board[] | null> {
+        const boards = await this.boardRepository.find({
+            select : ["id", "boardName"],
+            order : {
+                id : "ASC"
+            },
+            relations : ["userBoards.user", "userBoards.role", "lists", "workspace"]
+        });
+        return boards;
+    }
+
+    async getBoardById( boardId : number ): Promise<Board | null> {
+        const board = await this.boardRepository.findOne({
+            select : ["id", "boardName"],
+            where : {
+                id : boardId
+            },
+            relations : ["userBoards.user", "userBoards.role", "lists", "workspace"]
+        });
+        return board;
+    }
+
+    async getBoardByName( name : string ): Promise<Board | null> {
+        const board = await this.boardRepository.findOne({
+            select : ["id", "boardName"],
+            where : {
+                boardName : name
+            },
+            relations : ["userBoards.user", "userBoards.role", "lists", "workspace"]
+        });
+        return board;
+    }
+
+    async getAllBoardsInWorkspace( workspaceId : number ): Promise<Board[] | null> {
         const boards = await this.boardRepository.find({
             select : ["id", "boardName"],
             order : {
@@ -19,7 +52,7 @@ export class BoardRepository {
         });
         return boards;
     }
-    async getBoardById( workspaceId : number, boardId : number ): Promise<Board | null> {
+    async getBoardByIdInWorkspace( workspaceId : number, boardId : number ): Promise<Board | null> {
         const board = await this.boardRepository.findOne({
             select : ["id", "boardName"],
             where : {
@@ -33,7 +66,7 @@ export class BoardRepository {
         return board
     }
 
-    async getBoardByName( workspaceId : number, name : string ): Promise<Board | null> {
+    async getBoardByNameInWorkspace( workspaceId : number, name : string ): Promise<Board | null> {
         const board = await this.boardRepository.findOne({
             select : ["id", "boardName"],
             where : {
