@@ -10,14 +10,25 @@ class AttachmentRepository {
         return newAttachment;
     }
 
-    async getAttachmentById( cardId : number, attachmentId : number ): Promise<Attachment | null> {
+    async getAttachmentByIdInCard( cardId : number, attachmentId : number ): Promise<Attachment | null> {
         const attachment = await this.attachmentRepository.findOne({
-            select : ["id", "fileName", "filePath", "publicId"],
+            select : ["id", "filePath", "publicId"],
             where : {
                 id : attachmentId,
                 card : {
                     id : cardId
                 }
+            },
+            relations : ["card"]
+        });
+        return attachment;
+    }
+
+    async getAttachmentById( attachmentId : number ): Promise<Attachment | null> {
+        const attachment = await this.attachmentRepository.findOne({
+            select : ["id", "filePath", "publicId"],
+            where : {
+                id : attachmentId
             },
             relations : ["card"]
         });

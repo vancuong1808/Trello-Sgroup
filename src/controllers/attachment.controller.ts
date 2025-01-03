@@ -30,6 +30,15 @@ class AttachmentController {
         }
     }
 
+    async getAttachmentById( req : Request, res : Response, next : NextFunction ) : Promise<void> {
+        try {
+            const attachmentId = Number( req.params.attachmentId );
+            const result = await AttachmentService.getAttachmentById( attachmentId );
+            responseHandler.ok( res, result.message, result.data || {} );
+        } catch (error) {
+            next( error );
+        }   
+    }
 }
 
 export default new AttachmentController();

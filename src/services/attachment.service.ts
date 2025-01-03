@@ -24,7 +24,7 @@ class AttachmentService {
         if (!isExistedCard) {
             throw new notFoundError("Card not found");
         }
-        const isExistedAttachment = await AttachmentRepository.getAttachmentById( cardId, attachmentId );
+        const isExistedAttachment = await AttachmentRepository.getAttachmentByIdInCard( cardId, attachmentId );
         if (!isExistedAttachment) {
             throw new notFoundError("Attachment not found");
         }
@@ -33,6 +33,14 @@ class AttachmentService {
         }
         await AttachmentRepository.deleteAttachment( attachmentId );
         return new Result( true, 200, "Delete attachment successful" );
+    }
+
+    async getAttachmentById( attachmentId : number ) : Promise<Result> {
+        const attachment = await AttachmentRepository.getAttachmentById( attachmentId );
+        if (!attachment) {
+            throw new notFoundError("Attachment not found");
+        }
+        return new Result( true, 200, "Get attachment successful", attachment );
     }
 }
 export default new AttachmentService();
