@@ -57,7 +57,11 @@ class CardService {
         if (isExistedUserInCard) {
             throw new conflictError("User already in card");
         }
-        CardRepository.addMemberToCard( isExistedCard, isExistedUser );
+        const isUserInBoard = isExistedCard.list.board.userBoards.some( (userBoard) => userBoard.id === userId );
+        if (!isUserInBoard) {
+            throw new notFoundError("User not in board");
+        }
+        await CardRepository.addMemberToCard( isExistedCard, isExistedUser );
         return new Result( true, 200, "Add member to card successful" );
     }
 
