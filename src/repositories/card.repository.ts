@@ -124,6 +124,11 @@ class CardRepository {
         await this.cardRepository.save( card );
     }
 
+    async removeMemberFromCard( card : Card, user : User ): Promise<void> {
+        card.users = card.users.filter( u => u.id !== user.id );
+        await this.cardRepository.save( card );
+    }
+
 }
 
 export default new CardRepository();

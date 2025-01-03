@@ -65,6 +65,24 @@ class CardService {
         return new Result( true, 200, "Add member to card successful" );
     }
 
+    async removeMemberFromCard( cardId : number, userId : number ) : Promise<Result> {  
+        const isExistedCard = await CardRepository.getCardById( cardId );
+        if (!isExistedCard) {
+            throw new notFoundError("Card not found");
+        }
+        const isExistedUser = await UserRepository.getUserById( Number( userId ) );
+        if (!isExistedUser) {
+            throw new notFoundError("User not found");
+        }
+        const isExistedUserInCard = isExistedCard.users.some( (user) => user.id === isExistedUser.id );
+        if (!isExistedUserInCard) {
+            throw new notFoundError("User not in card");
+        }
+        await CardRepository.removeMemberFromCard( isExistedCard, isExistedUser );
+        return new Result( true, 200, "Remove member from card successful" );
+    }
+    
+
     async updateCard( cardId : number, card : Partial<Card> ) : Promise<Result> {
         const isExistedCard = await CardRepository.getCardById( cardId );
         if (!isExistedCard) {

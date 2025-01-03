@@ -47,6 +47,17 @@ class CardController {
         }
     }
 
+    async removeMemberFromCard( req : Request, res : Response, next : NextFunction ) : Promise<void> {
+        try {
+            const cardId = Number( req.body.cardId );
+            const userId = Number( req.body.userId );
+            const result = await CardService.removeMemberFromCard( cardId, userId );
+            responseHandler.ok( res, result.message, result.data || {} );
+        } catch (error) {
+            next( error );
+        }
+    }
+
     async updateCard( req : Request, res : Response, next : NextFunction ) : Promise<void> {
         try {
             const cardId = Number( req.params.cardId );

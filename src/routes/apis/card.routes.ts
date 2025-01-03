@@ -16,6 +16,8 @@ cardRoute.post("/card", authenticate, CheckMemberInList, RequiredPermissions( Pe
 
 cardRoute.post("/card/add/member", authenticate, CheckMemberInCard, RequiredPermissions( Permissions.ADD_MEMBER_TO_CARD ), CardValidator.validateUserToCard, validateHandler, cardController.addMemberToCard );
 
+cardRoute.delete("/card/remove/member", authenticate, CheckMemberInCard, RequiredPermissions( Permissions.REMOVE_MEMBER_FROM_CARD ), CardValidator.validateUserToCard, validateHandler, cardController.removeMemberFromCard );
+
 cardRoute.put("/card/:cardId", authenticate, CheckMemberInCard, RequiredPermissions( Permissions.UPDATE_CARD ), CardValidator.validateUpdateCard, validateHandler, cardController.updateCard );
 
 cardRoute.delete("/card/:cardId", authenticate, CheckMemberInCard, RequiredPermissions( Permissions.DELETE_CARD ), cardController.deleteCard );
