@@ -7,9 +7,6 @@ export class Notification {
     id! : number
 
     @Column({ type : "varchar", length : 100 })
-    title! : string
-
-    @Column({ type : "varchar", length : 100 })
     description! : string
 
     @CreateDateColumn()
@@ -17,8 +14,4 @@ export class Notification {
     
     @UpdateDateColumn()
     updatedAt! : Date
-
-    @ManyToOne( () => WorkSpace, (WorkSpace => WorkSpace.notifications ), { onDelete: "CASCADE" })
-    workspace! : WorkSpace
-
 }

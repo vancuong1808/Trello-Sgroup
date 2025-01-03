@@ -73,7 +73,5 @@ export interface CommentBody {
 
 export interface Client {
     id: Date
-    workspaceId: number
-    userId: number
     res : Response
 }

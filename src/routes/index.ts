@@ -11,7 +11,7 @@ import attachRoute from './apis/attachment.routes';
 import commentRoute from './apis/comment.routes';
 import todoRoute from './apis/todo.routes';
 import todolistRoute from './apis/todolist.routes';
-import { sseHandler } from '../handlers/sse.handler';
+import notificationRoute from './apis/notification.routes';
 const routes = express.Router();
 
 routes.use("/auth", authRoute );
@@ -26,6 +26,6 @@ routes.use("/attachments", attachRoute );
 routes.use("/comments", commentRoute );
 routes.use("/todos", todoRoute );
 routes.use("/todolists", todolistRoute );
-routes.get("/notifications", sseHandler);
+routes.use("/notifications", notificationRoute );
 
 export default routes;

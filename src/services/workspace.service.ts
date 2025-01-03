@@ -88,10 +88,10 @@ class WorkspaceService {
         newUserWorkspace.workspace = isExistedWorkspace;
         newUserWorkspace.role = isExistedRole;
         await UserWorkspaceRepository.addMemberToWorkspace( newUserWorkspace ); 
-        const notification = new Notification();
-        notification.title = "New member added to workspace";
-        notification.description = `${isExistedUser.username} added to workspace ${isExistedWorkspace.workspaceName}`;
-        await WorkspaceRepository.addNotification( workspaceId, notification );
+        // const notification = new Notification();
+        // notification.title = "New member added to workspace";
+        // notification.description = `${isExistedUser.username} added to workspace ${isExistedWorkspace.workspaceName}`;
+        // await WorkspaceRepository.addNotification( workspaceId, notification );
         return new Result( true, 201, "Member added to workspace successful" );
     }
 
@@ -109,10 +109,10 @@ class WorkspaceService {
             throw new notFoundError("Member of workspace not found");
         }
         await UserWorkspaceRepository.removeMemberFromWorkspace( isExistedMemberOfWorkspace.id );
-        const notification = new Notification();
-        notification.title = "Member removed from workspace";
-        notification.description = `${isExistedUser.username} removed from workspace ${isExistedWorkspace.workspaceName}`;
-        await WorkspaceRepository.addNotification( workspaceId, notification );
+        // const notification = new Notification();
+        // notification.title = "Member removed from workspace";
+        // notification.description = `${isExistedUser.username} removed from workspace ${isExistedWorkspace.workspaceName}`;
+        // await WorkspaceRepository.addNotification( workspaceId, notification );
         return new Result( true, 200, "Member removed from workspace successful" );
     }
 

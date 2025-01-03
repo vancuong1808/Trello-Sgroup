@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import SseClient from '../common/sse/sseClients.ts';
 import { CustomRequest, WorkSpaceBody } from "../common/typings/custom.interface";
 import responseHandler from "../handlers/response.handler";
 import workspaceService from "../services/workspace.service";

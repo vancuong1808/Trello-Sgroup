@@ -21,7 +21,4 @@ export class WorkSpace {
 
     @OneToMany( () => UserWorkSpace, (UserWorkspace) => UserWorkspace.workspace )
     userWorkspaces! : UserWorkSpace[]
-
-    @OneToMany( () => Notification, (Notification) => Notification.workspace )
-    notifications! : Notification[]
 }

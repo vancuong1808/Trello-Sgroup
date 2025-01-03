@@ -63,44 +63,6 @@ class WorkspaceRepository {
         await this.workspaceRepository.delete( id );
     }
 
-    async addNotification( workspaceId : number, notification : Notification ) : Promise<Notification | null> {
-        const workspace = await this.workspaceRepository.findOne({
-            where : {
-                id : workspaceId
-            }
-        });
-        if( workspace ) {
-            notification.workspace = workspace;
-            const newNotification = this.notificationRepository.create( notification );
-            await this.notificationRepository.save( newNotification );
-            return newNotification;
-        }
-        return null;
-    }
-
-    async getNotificationByWorkspaceId( workspaceId : number ) : Promise<Notification[] | null> {
-        const notifications = await this.notificationRepository.find({
-            where : {
-                workspace : {
-                    id : workspaceId
-                }
-            }
-        });
-        return notifications;
-    }
-
-    async getNotificationById( workspaceId : number, notificationId : number ) : Promise<Notification | null> {
-        const notification = await this.notificationRepository.findOne({
-            where : {
-                id : notificationId,
-                workspace : {
-                    id : workspaceId
-                }
-            }
-        });
-        return notification;
-    }
-
     async updateNotification( notificationId : number, notification : Partial<Notification> ) : Promise<void> {
         await this.notificationRepository.update( notificationId, notification );
     }
