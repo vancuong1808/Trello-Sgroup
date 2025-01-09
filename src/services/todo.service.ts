@@ -66,9 +66,17 @@ class TodoService {
         if (!checkTodo) {
             throw new notFoundError("Todo not found");
         }
-        const isDone = checkTodo.todoList.todos.some( (todo) => todo.isDone === true );
-        checkTodo.todoList.isDone = isDone;
-        await TodoListRepository.updateTodoList( checkTodo.todoList.id, checkTodo.todoList );
+        const todoListId = checkTodo.todoList.id;
+        const todoList = await TodoListRepository.getTodoListById( todoListId );
+        if (!todoList) {
+            throw new notFoundError("Todo list not found");
+        }
+        const isDoneTodos = todoList.todos.some( (todo) => todo.isDone === false );
+        todoList.isDone = !isDoneTodos;
+        const updatedTodoList = {
+            isDone : todoList.isDone
+        }
+        await TodoListRepository.updateTodoList( todoListId, updatedTodoList );
         return new Result( true, 200, "Check todo successful" );
     }
 }

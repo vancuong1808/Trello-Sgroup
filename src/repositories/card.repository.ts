@@ -11,7 +11,7 @@ class CardRepository {
             order : {
                 id : "asc"
             },
-            relations : ["attachments", "todolists", "comments"]
+            relations : ["attachments", "todolists", "comments", "users", "list"]
         });
         return cards;
     }
@@ -22,7 +22,7 @@ class CardRepository {
             where : {
                 id : cardId
             },
-            relations : ["attachments", "todolists", "comments"]
+            relations : ["attachments", "todolists", "comments", "users", "list"]
         });
         return card;
     }
@@ -33,7 +33,7 @@ class CardRepository {
             where : {
                 cardName : name
             },
-            relations : ["attachments", "todolists", "comments"]
+            relations : ["attachments", "todolists", "comments", "users", "list"]
         });
         return card;
     }
@@ -49,7 +49,7 @@ class CardRepository {
                     id : listId
                 }
             },
-            relations : ["attachments", "todolists", "comments"]
+            relations : ["attachments", "todolists", "comments", "users", "list"]
         });
         return cards;
     }
@@ -63,7 +63,7 @@ class CardRepository {
                     id : listId
                 }
             },
-            relations : ["attachments", "todolists", "comments"]
+            relations : ["attachments", "todolists", "comments", "users", "list"]
         });
         return card
     }
@@ -77,7 +77,7 @@ class CardRepository {
                     id : listId
                 }
             },
-            relations : ["attachments", "todolists", "comments"]
+            relations : ["attachments", "todolists", "comments", "users", "list"]
         });
         return card;
     }
@@ -108,7 +108,7 @@ class CardRepository {
 
     async getCardsByListId( listId : number ): Promise<Card[] | null> {
         const cards = await this.cardRepository.find({
-            select : ["id", "cardName"],
+            select : ["id", "cardName", "users"],
             relations : ["board"],
             where : {
                 list : {

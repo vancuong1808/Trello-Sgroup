@@ -4,7 +4,7 @@ import { File } from "multer";
 
 export interface CustomRequest extends Request {
     user? : string | JwtPayload
-    file? : File
+    roleOfUser? : number[]
 }
 
 export interface CustomError {

@@ -16,7 +16,7 @@ class CommentRepository {
             order : {
                 id : "asc"
             },
-            relations : ["card"]
+            relations : ["card", "card.users", "card.list"]
         });
         return comments;
     }
@@ -29,7 +29,7 @@ class CommentRepository {
                     id : cardId
                 }
             },
-            relations : ["card"]
+            relations : ["card", "card.users", "card.list"]
         });
         return comments;
     }
@@ -40,7 +40,7 @@ class CommentRepository {
             where : {
                 id : commentId
             },
-            relations : ["card"]
+            relations : ["card", "card.users", "card.list"]
         });
         return comment;
     }

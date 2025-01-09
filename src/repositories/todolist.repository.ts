@@ -16,7 +16,7 @@ class TodoListRepository {
             order : {
                 id : "asc"
             },
-            relations : ["card", "todos"]
+            relations : ["card", "todos", "card.users", "card.list"]
         });
         return todoLists;
     }
@@ -29,7 +29,7 @@ class TodoListRepository {
                     id : cardId
                 }
             },
-            relations : ["card", "todos"]
+            relations : ["card", "todos", "card.users", "card.list"]
         });
         return todoLists;
     }
@@ -40,7 +40,7 @@ class TodoListRepository {
             where : {
                 id : todoListId
             },
-            relations : ["card", "todos"]
+            relations : ["card", "todos", "card.users", "card.list"]
         });
         return todoList;
     }
@@ -51,7 +51,7 @@ class TodoListRepository {
             where : {
                 todolistName : name
             },
-            relations : ["card", "todos"]
+            relations : ["card", "todos", "card.users", "card.list"]
         });
         return todoList;
     }

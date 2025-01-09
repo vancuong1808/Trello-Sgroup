@@ -17,7 +17,7 @@ class AttachmentService {
         newAttachment.publicId = file.filename;
         newAttachment.card = isExistedCard;
         await AttachmentRepository.addAttachment( newAttachment );
-        return new Result( true, 201, "Create attachment successful" );
+        return new Result( true, 201, "Create attachment successful", { filePath : newAttachment.filePath } );
     }
     async deleteAttachment( cardId : number, attachmentId : number ) : Promise<Result> {
         const isExistedCard = await CardRepository.getCardById( cardId );
@@ -41,6 +41,14 @@ class AttachmentService {
             throw new notFoundError("Attachment not found");
         }
         return new Result( true, 200, "Get attachment successful", attachment );
+    }
+
+    async getAllAttachments() : Promise<Result> {
+        const attachments = await AttachmentRepository.getAllAttachments();
+        if (!attachments) {
+            throw new notFoundError("Attachments not found");
+        }
+        return new Result( true, 200, "Get all attachments successful", attachments );
     }
 }
 export default new AttachmentService();

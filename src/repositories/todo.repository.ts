@@ -16,7 +16,7 @@ class TodoRepository {
             order : {
                 id : "asc"
             },
-            relations : ["todoList", "todoList.isDone", "todoList.todos"]
+            relations : ["todoList", "todoList.card"]
         });
         return todos;
     }
@@ -29,7 +29,7 @@ class TodoRepository {
                     id : todoListId
                 }
             },
-            relations : ["todoList", "todoList.isDone", "todoList.todos"]
+            relations : ["todoList", "todoList.card"]
         });
         return todos;
     }
@@ -40,7 +40,7 @@ class TodoRepository {
             where : {
                 id : todoId
             },
-            relations : ["todoList", "todoList.isDone", "todoList.todos"]
+            relations : ["todoList", "todoList.card"]
         });
         return todo;
     }
@@ -51,7 +51,7 @@ class TodoRepository {
             where : {
                 todoName : name
             },
-            relations : ["todoList", "todoList.isDone", "todoList.todos"]
+            relations : ["todoList", "todoList.card"]
         });
         return todo;
     }

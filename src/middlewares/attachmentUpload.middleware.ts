@@ -4,7 +4,7 @@ import CardRepository from '../repositories/card.repository.ts';
 
 export const AttachUploadSingleMiddleware = async (req: any, res: any, next: any) => {
     try {
-        const cardId = Number(req.body.cardId);
+        const cardId = Number(req.params.cardId);
         const card = await CardRepository.getCardById(cardId);
         if (!card) {
             throw new notFoundError("Card not found");

@@ -46,6 +46,17 @@ class AttachmentRepository {
         return attachment;
     }
 
+    async getAllAttachments() : Promise<Attachment[] | null> {
+        const attachments = await this.attachmentRepository.find({
+            select : ["id", "fileName", "filePath", "publicId"],
+            order : {
+                id : "asc"
+            },
+            relations : ["card"]
+        });
+        return attachments;
+    }
+
     async deleteAttachment( attachmentId : number ): Promise<void> {
         await this.attachmentRepository.delete( attachmentId );
     }

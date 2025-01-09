@@ -9,7 +9,7 @@ class CommentController {
     async addComment( req : CustomRequest, res : Response, next : NextFunction ) : Promise<void> {
         try {
             const cardId = Number( req.body.cardId );
-            const commentBody : CommentBody = req.body.commentBody;
+            const commentBody : CommentBody = req.body;
             const userId : string = typeof req.user === "string" ? req.user : req.user?.userId;
             const result = await CommentService.addComment( cardId, userId, commentBody );
             responseHandler.created( res, result.message, result.data || {} );
@@ -40,7 +40,7 @@ class CommentController {
     async updateComment( req : Request, res : Response, next : NextFunction ) : Promise<void> {
         try {
             const commentId = Number( req.params.commentId );
-            const commentBody : Partial<CommentBody> = req.body.commentBody;
+            const commentBody : Partial<CommentBody> = req.body;
             const result = await CommentService.updateComment( commentId, commentBody );
             responseHandler.ok( res, result.message, result.data || {} );
         } catch (error) {

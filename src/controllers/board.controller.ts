@@ -26,7 +26,7 @@ class BoardController {
     async addBoard( req : CustomRequest, res : Response, next : NextFunction ) {
         try {
             const workspaceId = Number( req.body.workspaceId );
-            const boardBody : BoardBody = req.body.boardName;
+            const boardBody : BoardBody = req.body;
             const userId: string = typeof req.user === "string" ? req.user : req.user?.userId;
             const board = await boardService.addBoard( userId, workspaceId, boardBody );
             responseHandler.created( res, board.message, board.data || {} );
@@ -38,7 +38,7 @@ class BoardController {
     async updateBoard( req : Request, res : Response, next : NextFunction ) {
         try {
             const boardId = Number( req.params.boardId );
-            const boardBody : BoardBody = req.body.boardName;
+            const boardBody : BoardBody = req.body;
             const board = await boardService.updateBoard( boardId, boardBody );
             responseHandler.ok( res, board.message, board.data || {} );
         } catch (error : unknown) {

@@ -8,7 +8,7 @@ class TodoListController {
     async addTodoList( req : Request, res : Response, next : NextFunction ) : Promise<void> {
         try {
             const cardId = Number( req.body.cardId );
-            const todoListBody : TodoListBody = req.body.todoListName;
+            const todoListBody : TodoListBody = req.body;
             const result = await TodoListService.addTodoList( cardId, todoListBody );
             responseHandler.created( res, result.message, result.data || {} );
         } catch (error) {
@@ -27,7 +27,7 @@ class TodoListController {
 
     async getTodoListById( req : Request, res : Response, next : NextFunction ) : Promise<void> {
         try {
-            const todoListId = Number( req.params.todoListId );
+            const todoListId = Number( req.params.todolistId );
             const result = await TodoListService.getTodoListById( todoListId );
             responseHandler.ok( res, result.message, result.data || {} );
         } catch (error) {
@@ -37,8 +37,8 @@ class TodoListController {
 
     async updateTodoList( req : Request, res : Response, next : NextFunction ) : Promise<void> {
         try {
-            const todoListId = Number( req.params.todoListId );
-            const todoListBody : Partial<TodoListBody> = req.body.todoListName;
+            const todoListId = Number( req.params.todolistId );
+            const todoListBody : Partial<TodoListBody> = req.body;
             const result = await TodoListService.updateTodoList( todoListId, todoListBody );
             responseHandler.ok( res, result.message, result.data || {} );
         } catch (error) {
@@ -48,7 +48,7 @@ class TodoListController {
 
     async deleteTodoList( req : Request, res : Response, next : NextFunction ) : Promise<void> {
         try {
-            const todoListId = Number( req.params.todoListId );
+            const todoListId = Number( req.params.todolistId );
             const result = await TodoListService.deleteTodoList( todoListId );
             responseHandler.ok( res, result.message, result.data || {} );
         } catch (error) {

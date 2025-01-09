@@ -7,8 +7,8 @@ class TodoController {
     
     async addTodo( req : Request, res : Response, next : NextFunction ) : Promise<void> {
         try {
-            const todoListId = Number( req.body.todoListId );
-            const todoBody : TodoBody = req.body.todoName;
+            const todoListId = Number( req.body.todolistId );
+            const todoBody : TodoBody = req.body;
             const result = await TodoService.addTodo( todoListId, todoBody );
             responseHandler.created( res, result.message, result.data || {} );
         } catch (error) {
@@ -38,7 +38,7 @@ class TodoController {
     async updateTodo( req : Request, res : Response, next : NextFunction ) : Promise<void> {
         try {
             const todoId = Number( req.params.todoId );
-            const todoBody : Partial<TodoBody> = req.body.todoName;
+            const todoBody : Partial<TodoBody> = req.body;
             const result = await TodoService.updateTodo( todoId, todoBody );
             responseHandler.ok( res, result.message, result.data || {} );
         } catch (error) {

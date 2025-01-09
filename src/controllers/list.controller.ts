@@ -26,7 +26,7 @@ class ListController {
     async addList( req : Request, res : Response, next : NextFunction ) : Promise<void> {
         try {
             const boardId = Number( req.body.boardId );
-            const listBody : ListBody = req.body.listName;
+            const listBody : ListBody = req.body;
             const result = await ListService.addList( boardId, listBody );
             responseHandler.created( res, result.message, result.data || {} );
         } catch (error) {
@@ -37,7 +37,7 @@ class ListController {
     async updateList( req : Request, res : Response, next : NextFunction ) : Promise<void> {
         try {
             const listId = Number( req.params.listId );
-            const listBody : Partial<ListBody> = req.body.listName;
+            const listBody : Partial<ListBody> = req.body;
             const result = await ListService.updateList( listId, listBody );
             responseHandler.ok( res, result.message, result.data || {} );
         } catch (error) {

@@ -6,7 +6,7 @@ class AttachmentController {
 
     async uploadAttachment( req : Request, res : Response, next : NextFunction ) : Promise<void> {
         try {
-            const cardId = Number( req.body.cardId );
+            const cardId = Number( req.params.cardId );
             const file  = req.file;
             if (!file) {
                 responseHandler.badRequest( res, "File is required" );
@@ -38,6 +38,15 @@ class AttachmentController {
         } catch (error) {
             next( error );
         }   
+    }
+
+    async getAllAttachments( req : Request, res : Response, next : NextFunction ) : Promise<void> {
+        try {
+            const result = await AttachmentService.getAllAttachments();
+            responseHandler.ok( res, result.message, result.data || {} );
+        } catch (error) {
+            next( error );
+        }
     }
 }
 

@@ -1,3 +1,4 @@
+import { Board } from './../orm/entities/board.entity';
 import { NextFunction, Response } from 'express';
 import { UserBoard } from './../orm/entities/userboard.entity';
 import UserRepository from '../repositories/user.repository';
@@ -12,6 +13,7 @@ import todolistRepository from '../repositories/todolist.repository';
 import TodoRepository from '../repositories/todo.repository';
 import CommentRepository from '../repositories/comment.repository';
 import { badRequestError, forbiddenError, notFoundError } from "../handlers/errors/customError";
+import { Console } from 'console';
 
 export const IsMemberOfBoard : (
     req : CustomRequest,
@@ -24,7 +26,7 @@ export const IsMemberOfBoard : (
 ) => {
     try {
         const userId : string = typeof req.user === "string" ? req.user : req.user?.userId;
-        const boardId : number = Number( req.params.boardId ) == null ? Number( req.body.boardId ) : Number( req.params.boardId );
+        const boardId : number = Number( req.params.boardId ) || Number( req.body.boardId );
         if ( !userId ) {
             next( new badRequestError("userId is not valid") );
         }
@@ -43,6 +45,11 @@ export const IsMemberOfBoard : (
         if ( !isMember ) {
             next( new forbiddenError("You are not a member of this board") );
         }
+        req.roleOfUser = [];
+        const isExistMemberOfBoard = await UserBoardRepository.getMemberById( boardId, Number(userId) );
+        if ( isExistMemberOfBoard ) {
+            req.roleOfUser?.push( isExistMemberOfBoard!.role.id );
+        }
         return next();
     } catch (error : unknown) {
         next( new badRequestError(`permission middleware has error : ${ error }`))
@@ -60,7 +67,7 @@ export const IsMemberOfWorkspace : (
 ) => {
     try {
         const userId : string = typeof req.user === "string" ? req.user : req.user?.userId;
-        const workspaceId : number = Number( req.params.workspaceId ) == null ? Number( req.body.workspaceId ) : Number( req.params.workspaceId );
+        const workspaceId : number = Number( req.params.workspaceId ) || Number( req.body.workspaceId );
         if ( !userId ) {
             next( new badRequestError("userId is not valid") );
         }
@@ -79,6 +86,11 @@ export const IsMemberOfWorkspace : (
         if ( !isMember ) {
             next( new forbiddenError("You are not a member of this workspace") );
         }
+        req.roleOfUser = [];
+        const isExistMemberOfWorkspace = await UserWorkspaceRepository.getMemberById( workspaceId, Number(userId) );
+        if ( isExistMemberOfWorkspace ) {
+            req.roleOfUser?.push( isExistMemberOfWorkspace!.role.id );
+        }
         return next();
     } catch (error : unknown) {
         next( new badRequestError(`permission middleware has error : ${ error }`))
@@ -96,7 +108,7 @@ export const CheckMemberInList : (
 ) => {
     try {
         const userId : string = typeof req.user === "string" ? req.user : req.user?.userId;
-        const listId : number = Number( req.params.listId ) == null ? Number( req.body.listId ) : Number( req.params.listId );
+        const listId : number = Number( req.params.listId ) || Number( req.body.listId );
         if ( !userId ) {
             next( new badRequestError("userId is not valid") );
         }
@@ -111,9 +123,17 @@ export const CheckMemberInList : (
         if ( !isExistList ) {
             next( new notFoundError("List not found") );
         }
-        const check = isExistList?.board.userBoards.some( ( userBoard : UserBoard ) => userBoard.id === Number( userId ) );
+        const check = isExistList?.board.userBoards.some( ( userBoard : UserBoard ) => userBoard.user.id == Number( userId ) );
         if ( !check ) {
             next( new forbiddenError("You are not a member of this board") );
+        }
+        const boardId = isExistList?.board.id;
+        req.roleOfUser = [];
+        if ( boardId ) {
+            const isExistMemberOfBoard = await UserBoardRepository.getMemberById(  boardId, Number(userId) ); 
+            if ( isExistMemberOfBoard ) {
+                req.roleOfUser?.push( isExistMemberOfBoard!.role.id );
+            }   
         }
         return next();
     } catch (error : unknown) {
@@ -132,7 +152,7 @@ export const CheckMemberInCard : (
 ) => {
     try {
         const userId : string = typeof req.user === "string" ? req.user : req.user?.userId;
-        const cardId : number = Number( req.params.cardId ) == null ? Number( req.body.cardId ) : Number( req.params.cardId );
+        const cardId : number = Number( req.params.cardId ) || Number( req.body.cardId );
         if ( !userId ) {
             next( new badRequestError("userId is not valid") );
         }
@@ -151,6 +171,20 @@ export const CheckMemberInCard : (
         if ( !check ) {
             next( new forbiddenError("You are not a member of this Card") );
         }
+        const listId = isExistCard!.list.id;
+        const isExistList = await ListRepository.getListById( listId );
+        if ( !isExistList ) {
+            next( new notFoundError("List not found") );
+        }
+        req.roleOfUser = [];
+        const boardId = isExistList?.board.id;
+        if ( boardId ) {
+            const isExistMemberOfBoard = await UserBoardRepository.getMemberById( boardId, Number(userId) );
+            if ( isExistMemberOfBoard ) {
+                req.roleOfUser?.push( isExistMemberOfBoard!.role.id );
+            }
+        }
+        return next();
     } catch( error : unknown ) {
         next( new badRequestError(`checkMember middleware has error : ${ error }`))
     }
@@ -167,7 +201,7 @@ export const CheckMemberInTodoList : (
 ) => {
     try {
         const userId : string = typeof req.user === "string" ? req.user : req.user?.userId;
-        const todoListId : number = Number( req.params.todoListId ) == null ? Number( req.body.todoListId ) : Number( req.params.todoListId );
+        const todoListId : number = Number( req.params.todolistId ) || Number( req.body.todolistId );
         if ( !userId ) {
             next( new badRequestError("userId is not valid") );
         }
@@ -186,6 +220,19 @@ export const CheckMemberInTodoList : (
         if ( !check ) {
             next( new forbiddenError("You are not a member of this Card") );
         }
+        const listId = isExistTodoList!.card.list.id;
+        const isExistList = await ListRepository.getListById( listId );
+        if ( !isExistList ) {
+            next( new notFoundError("List not found") );
+        }
+        req.roleOfUser = [];
+        const boardId = isExistList?.board.id;
+        if ( boardId ) {
+            const isExistMemberOfBoard = await UserBoardRepository.getMemberById(  boardId, Number(userId) ); 
+            if ( isExistMemberOfBoard ) {
+                req.roleOfUser?.push( isExistMemberOfBoard!.role.id );
+            }   
+        }
         return next();
     } catch (error : unknown) {
         next( new badRequestError(`checkMember middleware has error : ${ error }`))
@@ -203,7 +250,7 @@ export const CheckMemberInTodo : (
 ) => {
     try {
         const userId : string = typeof req.user === "string" ? req.user : req.user?.userId;
-        const todoId : number = Number( req.params.todoId ) == null ? Number( req.body.todoId ) : Number( req.params.todoId );
+        const todoId : number = Number( req.params.todoId ) || Number( req.body.todoId );
         if ( !userId ) {
             next( new badRequestError("userId is not valid") );
         }
@@ -218,9 +265,26 @@ export const CheckMemberInTodo : (
         if ( !isExistTodo ) {
             next( new notFoundError("Todo not found") );
         }
-        const check = isExistTodo?.todoList.card.users.some( ( user ) => user.id === Number( userId ) );
+        const isExistTodoList = await todolistRepository.getTodoListById( isExistTodo!.todoList.id );
+        if ( !isExistTodoList ) {
+            next( new notFoundError("TodoList not found") );
+        }
+        const check = isExistTodoList?.card.users.some( ( user ) => user.id === Number( userId ) );
         if ( !check ) {
             next( new forbiddenError("You are not a member of this Card") );
+        }
+        const listId = isExistTodoList!.card.list.id;
+        const isExistList = await ListRepository.getListById( listId );
+        if ( !isExistList ) {
+            next( new notFoundError("List not found") );
+        }
+        req.roleOfUser = [];
+        const boardId = isExistList?.board.id;
+        if ( boardId ) {
+            const isExistMemberOfBoard = await UserBoardRepository.getMemberById(  boardId, Number(userId) ); 
+            if ( isExistMemberOfBoard ) {
+                req.roleOfUser?.push( isExistMemberOfBoard!.role.id );
+            }   
         }
         return next();
     } catch (error : unknown) {
@@ -239,7 +303,7 @@ export const CheckMemberInComment : (
 ) => {
     try {
         const userId : string = typeof req.user === "string" ? req.user : req.user?.userId;
-        const commentId : number = Number( req.params.commentId ) == null ? Number( req.body.commentId ) : Number( req.params.commentId );
+        const commentId : number = Number( req.params.commentId ) || Number( req.body.commentId );
         if ( !userId ) {
             next( new badRequestError("userId is not valid") );
         }
@@ -257,6 +321,19 @@ export const CheckMemberInComment : (
         const check = isExistComment?.card.users.some( ( user ) => user.id === Number( userId ) );
         if ( !check ) {
             next( new forbiddenError("You are not a member of this Card") );
+        }
+        const listId = isExistComment!.card.list.id;
+        const isExistList = await ListRepository.getListById( listId );
+        if ( !isExistList ) {
+            next( new notFoundError("List not found") );
+        }
+        req.roleOfUser = [];
+        const boardId = isExistList?.board.id;
+        if ( boardId ) {
+            const isExistMemberOfBoard = await UserBoardRepository.getMemberById( boardId, Number(userId) );
+            if ( isExistMemberOfBoard ) {
+                req.roleOfUser?.push( isExistMemberOfBoard!.role.id );
+            }
         }
         return next();
     } catch (error : unknown) {

@@ -21,7 +21,7 @@ class ListRepository {
             where : {
                 id : id
             },
-            relations : ["cards", "board.userBoards", "board.workspace"]
+            relations : ["cards", "board.userBoards.user", "board.workspace"]
         });
         return list;
     }

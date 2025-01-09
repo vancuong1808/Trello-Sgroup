@@ -28,7 +28,7 @@ class CardController {
         try {
             const listId = Number( req.body.listId );
             const userId: string = typeof req.user === "string" ? req.user : req.user?.userId;  
-            const cardBody : CardBody = req.body.cardName;
+            const cardBody : CardBody = req.body;
             const result = await CardService.addCard( listId, userId, cardBody );
             responseHandler.created( res, result.message, result.data || {} );
         } catch (error) {
@@ -61,7 +61,7 @@ class CardController {
     async updateCard( req : Request, res : Response, next : NextFunction ) : Promise<void> {
         try {
             const cardId = Number( req.params.cardId );
-            const cardBody : Partial<CardBody> = req.body.cardName;
+            const cardBody : Partial<CardBody> = req.body;
             const result = await CardService.updateCard( cardId, cardBody );
             responseHandler.ok( res, result.message, result.data || {} );
         } catch (error) {

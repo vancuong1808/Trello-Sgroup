@@ -12,7 +12,7 @@ class CardService {
         if (!cards) {
             throw new notFoundError("Cards not found");
         }
-        return new Result( true, 200, "Get all cards successful", cards.values );
+        return new Result( true, 200, "Get all cards successful", cards );
     }
 
     async getCardById( cardId : number ) : Promise<Result> {
@@ -39,6 +39,7 @@ class CardService {
         const newCard = new Card();
         newCard.cardName = card.cardName;
         newCard.list = isExistedList;
+        newCard.users = [];
         newCard.users.push( isExistedUser );
         await CardRepository.addCard( newCard );
         return new Result( true, 201, "Create card successful" );
@@ -57,8 +58,13 @@ class CardService {
         if (isExistedUserInCard) {
             throw new conflictError("User already in card");
         }
-        const isUserInBoard = isExistedCard.list.board.userBoards.some( (userBoard) => userBoard.id === userId );
-        if (!isUserInBoard) {
+        const isUserInBoard = isExistedCard.list.id;
+        const isUserInBoardList = await ListRepository.getListById( isUserInBoard );
+        if (!isUserInBoardList) {
+            throw new notFoundError("User not in board");
+        }
+        const isUserInBoardUser = isUserInBoardList.board.userBoards.some( (user) => user.user.id === isExistedUser.id );
+        if (!isUserInBoardUser) {
             throw new notFoundError("User not in board");
         }
         await CardRepository.addMemberToCard( isExistedCard, isExistedUser );

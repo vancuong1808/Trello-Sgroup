@@ -38,19 +38,8 @@ export const RequiredPermissions : (
                 rolesFromUser = isExistRoleFromUser!.roles.map(( role : Role ) => role.id);
                 await RedisClient.setString( `rolesOfUser:${ userId }`, JSON.stringify( rolesFromUser ), 3600 );
             }
-            const workspaceId: number = Number( req.params.workspaceId );
-            if ( workspaceId ) {
-                const isExistMemberOfWorkspace = await UserWorkspaceRepository.getMemberById( workspaceId, Number(userId) ); 
-                if ( isExistMemberOfWorkspace ) {
-                    rolesFromUser.push( isExistMemberOfWorkspace!.role.id );
-                }
-            }
-            const boardId: number = Number( req.params.boardId );
-            if ( boardId ) {
-                const isExistMemberOfBoard = await UserBoardRepository.getMemberById(  boardId, Number(userId) ); 
-                if ( isExistMemberOfBoard ) {
-                    rolesFromUser.push( isExistMemberOfBoard!.role.id );
-                }   
+            if ( req.roleOfUser ) {
+                rolesFromUser.push( ...req.roleOfUser );
             }
             const isExistPermissionFromRole = await PermissionRepository.getAllPermissionsRelateWithRole( rolesFromUser );
             if ( !isExistPermissionFromRole ) {
