@@ -3,6 +3,7 @@ import { CardBody } from "../common/typings/custom.interface";
 import responseHandler from "../handlers/response.handler";
 import CardService from "../services/card.service";
 import { CustomRequest } from '../common/typings/custom.interface.d';
+import { sseNotification } from '../handlers/sse.handler.ts';
 
 class CardController {
     async getAllCards( req : Request, res : Response, next : NextFunction ) : Promise<void> {
@@ -30,7 +31,9 @@ class CardController {
             const userId: string = typeof req.user === "string" ? req.user : req.user?.userId;  
             const cardBody : CardBody = req.body;
             const result = await CardService.addCard( listId, userId, cardBody );
-            responseHandler.created( res, result.message, result.data || {} );
+            const { wordSpaceId, boardId, Log } = result.data;
+            sseNotification( req, res, Log, wordSpaceId, boardId );
+            responseHandler.created( res, result.message, {} );
         } catch (error) {
             next( error );
         }

@@ -6,6 +6,8 @@ import BoardRepository from '../repositories/board.repository.ts';
 import UserBoardRepository from '../repositories/userboard.repository.ts';
 import UserRepository from '../repositories/user.repository.ts';
 import RoleRepository from '../repositories/role.repository.ts';
+import { ActivityLog } from '../orm/entities/activitylog.entity.ts';
+import ActivitylogRepository from '../repositories/activitylog.repository.ts';
 import { Roles } from '../common/enums/role.ts';
 import WorkSpaceRepository from '../repositories/workspace.repository.ts';
 import { BoardBody } from '../common/typings/custom.interface';
@@ -59,7 +61,13 @@ class BoardService {
         newUserBoard.board = checkBoard;
         newUserBoard.role = isExistedRole;
         await UserBoardRepository.addMemberToBoard( newUserBoard );
-        return new Result( true, 201, "Create board successful" );
+        const newActivityLog = new ActivityLog();
+        newActivityLog.description = `Create board ${board.boardName} in workspace ${isExistedWorkspace.workspaceName}`;
+        newActivityLog.user = isExistedUser;
+        newActivityLog.workspace = isExistedWorkspace;
+        newActivityLog.board = checkBoard;
+        await ActivitylogRepository.addActivityLog( newActivityLog );
+        return new Result( true, 201, "Create board successful", { workspaceId : workspaceId, boardId : checkBoard.id, Log : newActivityLog.description } );
     }
 
     async addMemberToBoard( boardId : number, userId : number ) : Promise<Result> {

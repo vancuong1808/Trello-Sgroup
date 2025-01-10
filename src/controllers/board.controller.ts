@@ -1,6 +1,7 @@
 import responseHandler from "../handlers/response.handler";
 import { NextFunction, Request, Response } from "express";
 import { CustomRequest, BoardBody } from "../common/typings/custom.interface";
+import { sseNotification } from "../handlers/sse.handler.ts";
 import boardService from "../services/board.service";
 
 class BoardController {
@@ -29,7 +30,9 @@ class BoardController {
             const boardBody : BoardBody = req.body;
             const userId: string = typeof req.user === "string" ? req.user : req.user?.userId;
             const board = await boardService.addBoard( userId, workspaceId, boardBody );
-            responseHandler.created( res, board.message, board.data || {} );
+            const { wordSpaceId, boardId, Log } = board.data;
+            sseNotification( req, res, Log, wordSpaceId, boardId );
+            responseHandler.created( res, board.message, {} );
         } catch (error : unknown) {
             next( error );
         }

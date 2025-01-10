@@ -8,7 +8,6 @@ import UserWorkspaceRepository from '../repositories/userworkspace.repository.ts
 import RoleRepository from '../repositories/role.repository.ts';
 import { WorkSpaceBody } from '../common/typings/custom.interface';
 import { Roles } from '../common/enums/role.ts';
-import { Notification } from '../orm/entities/notification.entity';
 import { JwtPayload } from 'jsonwebtoken';
 
 class WorkspaceService {

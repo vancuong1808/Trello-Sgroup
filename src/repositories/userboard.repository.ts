@@ -27,6 +27,34 @@ class UserBoardRepository {
         return members;
     }
 
+    async getMembersByBoardId( boardId : number ): Promise<UserBoard[] | null> {
+        const members = await this.userBoardRepository.find({
+            select : {
+                user : {    
+                    id : true,
+                    username : true,
+                    email : true,
+                    createdAt : true,
+                },
+                role : {
+                    id : true,
+                    roleName : true,
+                },
+                board : {
+                    id : true,
+                    boardName : true,
+                }
+            },
+            where : {
+                board : {
+                    id : boardId
+                }
+            },
+            relations : ["user", "role", "board"]
+        });
+        return members;
+    }
+
     async getMemberById( boardId : number, memberId : number ): Promise<UserBoard | null> {
         const member = await this.userBoardRepository.findOne({
             select : {

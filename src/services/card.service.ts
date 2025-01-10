@@ -2,6 +2,8 @@ import { CardBody } from '../common/typings/custom.interface';
 import { conflictError, notFoundError } from "../handlers/errors/customError.ts";
 import { Result } from '../handlers/result.handler.ts';
 import { Card } from '../orm/entities/card.entity.ts';
+import { ActivityLog } from '../orm/entities/activitylog.entity.ts';
+import ActivitylogRepository from '../repositories/activitylog.repository.ts';
 import CardRepository from '../repositories/card.repository.ts';
 import ListRepository from '../repositories/list.repository.ts';
 import UserRepository from '../repositories/user.repository.ts';
@@ -42,7 +44,13 @@ class CardService {
         newCard.users = [];
         newCard.users.push( isExistedUser );
         await CardRepository.addCard( newCard );
-        return new Result( true, 201, "Create card successful" );
+        const newActivityLog = new ActivityLog();
+        newActivityLog.description = `Create card ${newCard.cardName} in list ${isExistedList.listName}`;
+        newActivityLog.user = isExistedUser;
+        newActivityLog.workspace = isExistedList.board.workspace;
+        newActivityLog.board = isExistedList.board;
+        await ActivitylogRepository.addActivityLog( newActivityLog );
+        return new Result( true, 201, "Create card successful", { wordSpaceId : isExistedList.board.workspace.id, boardId : isExistedList.board.id, Log : newActivityLog.description } );
     }
 
     async addMemberToCard( cardId : number, userId : number ) : Promise<Result> {

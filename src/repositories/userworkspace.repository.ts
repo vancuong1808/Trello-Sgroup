@@ -27,6 +27,34 @@ class UserWorkspaceRepository {
         return members;
     }
 
+    async getMembersByWorkspaceId( workspaceId : number ): Promise<UserWorkSpace[] | null> {
+        const members = await this.userWorkspaceRepository.find({
+            select : {
+                user : {    
+                    id : true,
+                    username : true,
+                    email : true,
+                    createdAt : true,
+                },
+                role : {
+                    id : true,
+                    roleName : true,
+                },
+                workspace : {
+                    id : true,
+                    workspaceName : true,
+                }
+            },
+            where : {
+                workspace : {
+                    id : workspaceId
+                }
+            },
+            relations : ["user", "role", "workspace"]
+        });
+        return members;
+    }
+
     async getMemberById( workspaceId : number, memberId : number ): Promise<UserWorkSpace | null> {
         const member = await this.userWorkspaceRepository.findOne({
             select : {

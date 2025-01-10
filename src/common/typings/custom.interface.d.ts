@@ -15,7 +15,7 @@ export interface CustomResponseResult {
     isOk: boolean
     status?: number
     message: string | string[]
-    data?: object
+    data?: any
 }
 
 export interface RegisterBody {
@@ -72,6 +72,7 @@ export interface CommentBody {
 }
 
 export interface Client {
-    id: Date
+    id: Date,
+    userId : number
     res : Response
 }
